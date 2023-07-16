@@ -4,7 +4,7 @@ async function createUser(
   username,
   password
 ) {
-  let user = User.create({
+  let user = await User.create({
     username: username,
     password: password
   })
