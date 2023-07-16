@@ -31,7 +31,7 @@ app.use(express.json());
       .then((user) => {
         const maxAge = 3 * 60 * 60;
         const token = jwt.sign(
-          { id: user._id, username, role: user.role },
+          { username, role: user.role },
           process.env.SECRET_TOKEN,
           {
             expiresIn: maxAge, 
