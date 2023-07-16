@@ -6,7 +6,7 @@ async function createUser(
 ) {
   let user = User.create({
     username: name,
-    password
+    password: password
   })
 
   try {
