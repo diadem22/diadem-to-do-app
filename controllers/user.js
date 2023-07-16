@@ -1,11 +1,11 @@
 const { User } = require('../models/user');
 
 async function createUser(
-  name,
+  username,
   password
 ) {
   let user = User.create({
-    username: name,
+    username: username,
     password: password
   })
 
