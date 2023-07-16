@@ -22,7 +22,7 @@ app.use(express.json());
   app.post('/to-do/create-user', async (req, res, next) => {
     const { name, password, role } = req.body;
 
-
+    
     bcrypt.hash(password, 10).then(async (hash) => {
     await createUser({
       name,
@@ -61,22 +61,36 @@ app.use(express.json());
 
     try {
       const user = await loginUser(name, password);
-      if (user) {
-        return res.json({
-          token: jsonwebtoken.sign({ user: user.role }, process.env.SECRET_TOKEN),
-        });
-      } else {
-        res.status(401).json(
-          { message: "The username and password your provided are invalid" }
-        );
-      }
-    } catch (error) {
-      res.status(400).json({
-        message: 'An error occurred',
-        error: error.message,
+      bcrypt.compare(password, user.password).then(function (result) {
+        if (result) {
+          const maxAge = 3 * 60 * 60;
+          const token = jwt.sign(
+            { id: user._id, username, role: user.role },
+            jwtSecret,
+            {
+              expiresIn: maxAge, 
+            }
+          );
+          res.cookie("jwt", token, {
+            httpOnly: true,
+            maxAge: maxAge * 1000, 
+          });
+          res.status(201).json({
+            message: "User successfully Logged in",
+            user: user._id,
+          });
+        } else {
+          res.status(400).json({ message: "Login not succesful" });
+        }
       });
+    }catch (error) {
+    res.status(400).json({
+      message: "An error occurred",
+      error: error.message,
+    });
+  }
     }
-  });
+  );
 
   app.post('/to-do/create-activity', async (req, res, next) => {
     const { user_id, name, category, date, isPublished, priority } = req.body;
