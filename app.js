@@ -20,7 +20,7 @@ app.use(express.json());
   });
 
   app.post('/to-do/create-user', async (req, res, next) => {
-    const { name, password, role } = req.body;
+    const { username, password } = req.body;
 
     
     if (password.length < 6) {
@@ -31,7 +31,7 @@ app.use(express.json());
     try {
       bcrypt.hash(password, 10).then(async (hash) => {
     await createUser({
-      name,
+      username,
       password: hash,
     })
       .then((user) =>

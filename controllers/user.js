@@ -5,7 +5,7 @@ async function createUser(
   password
 ) {
   let user = User.create({
-    name,
+    username: name,
     password
   })
 
