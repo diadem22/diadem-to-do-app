@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 const { User } = require('./user');
 
+dotenv.config()
+
 mongoose
-  .connect(
-    `mongodb+srv://Ifeoluwa:Gbenro@clustertest.ps0lptp.mongodb.net/test`,
-    {
-      useNewUrlParser: true,
-    }
-  )
+  .connect(process.env.MONGO_DB_URI, {
+    useNewUrlParser: true,
+  })
   .then(() => console.log('Connected to MongoDB...'))
   .catch((err) => console.log('Could not connect to MongoDB...', err));
 

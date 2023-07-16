@@ -1,13 +1,16 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
 const app = express();
 const {
   createActivity,
   updateActivity,
   fetchById,
 } = require('./controllers/activity');
-const { createUser } = require('./controllers/user')
+const { createUser, loginUser } = require('./controllers/user')
 
 app.use(express.urlencoded({ extended: false }));
+dotenv.config();
 
 app.use(express.json());
 
@@ -16,17 +19,60 @@ app.use(express.json());
   });
 
   app.post('/to-do/create-user', async (req, res, next) => {
-    const { name } = req.body;
+    const { name, password, role } = req.body;
+
+
+    bcrypt.hash(password, 10).then(async (hash) => {
+    await createUser({
+      name,
+      password: hash,
+    })
+      .then((user) => {
+        const maxAge = 3 * 60 * 60;
+        const token = jwt.sign(
+          { id: user._id, username, role: user.role },
+          process.env.SECRET_TOKEN,
+          {
+            expiresIn: maxAge, 
+          }
+        );
+        res.cookie('jwt', token, {
+          httpOnly: true,
+          maxAge: maxAge * 1000, 
+        });
+        res.status(201).json({
+          message: 'User successfully created',
+          user: user._id,
+        });
+      })
+      .catch((error) =>
+        res.status(400).json({
+          message: 'User not successful created',
+          error: error.message,
+        })
+      );
+  })
+  });
+
+  app.get('/to-do/login', async (req, res, next) => {
+    const { name, password } = req.body;
 
     try {
-      const user = await createUser(
-        name
-      );
-      return res
-        .status(200)
-        .json({ data: user, success: true, message: 'User created' });
+      const user = await loginUser(name, password);
+      if (user) {
+        return res.json({
+          token: jsonwebtoken.sign({ user: user.role }, process.env.SECRET_TOKEN),
+        });
+      } else {
+        res.status(401).json(
+          { message: "The username and password your provided are invalid" }
+        );
+      }
     } catch (error) {
-      return next(error);
+      res.status(400).json({
+        message: 'An error occurred',
+        error: error.message,
+      });
     }
   });
 
@@ -80,10 +126,12 @@ app.use(express.json());
   });
 
 
-app.listen(process.env.PORT || 6000, () => {
-  console.log('Server is listening on port 6000....');
+
+
+app.listen(process.env.PORT, () => {
+  console.log(`Server is listening on port  ${process.env.PORT}....`);
 });
 
 
-
+// fb096c53fa0b5d2c0813f6de17bd0e85fa1ebf0c43dfac57bc5c895cfcc201b07329f6;
 
