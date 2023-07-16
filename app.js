@@ -29,10 +29,9 @@ app.use(express.json());
         .json({ message: 'Password less than 6 characters' });
     }
     try {
-      bcrypt.hash(password, 10).then(async (hash) => {
     await createUser({
       username,
-      password: hash,
+      password,
     })
       .then((user) =>
         res.status(200).json({
@@ -46,13 +45,12 @@ app.use(express.json());
           error: error.message,
         })
       );
-  })
   }catch (error) {
     res.status(400).json({
       message: "An error occurred",
       error: error.message,
     });
-  }
+  } 
 })
 
   app.get('/to-do/login', async (req, res, next) => {
@@ -60,12 +58,11 @@ app.use(express.json());
 
     try {
       const user = await loginUser(name, password);
-      bcrypt.compare(password, user.password).then(function (result) {
-        if (result) {
+        if (user) {
           const maxAge = 3 * 60 * 60;
           const token = jwt.sign(
             { id: user._id, username, role: user.role },
-            jwtSecret,
+            process.env.SECRET_TOKEN,
             {
               expiresIn: maxAge, 
             }
@@ -81,7 +78,6 @@ app.use(express.json());
         } else {
           res.status(400).json({ message: "Login not succesful" });
         }
-      });
     }catch (error) {
     res.status(400).json({
       message: "An error occurred",
