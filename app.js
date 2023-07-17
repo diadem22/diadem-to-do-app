@@ -54,10 +54,10 @@ app.use(express.json());
 })
 
   app.get('/to-do/login', async (req, res, next) => {
-    const { name, password } = req.body;
+    const { username, password } = req.body;
 
     try {
-      const user = await loginUser(name, password);
+      const user = await loginUser(username, password);
         if (user) {
           const maxAge = 3 * 60 * 60;
           const token = jwt.sign(
@@ -67,13 +67,10 @@ app.use(express.json());
               expiresIn: maxAge, 
             }
           );
-          res.cookie("jwt", token, {
-            httpOnly: true,
-            maxAge: maxAge * 1000, 
-          });
           res.status(201).json({
             message: "User successfully Logged in",
             user: user._id,
+            token: token
           });
         } else {
           res.status(400).json({ message: "Login not succesful" });

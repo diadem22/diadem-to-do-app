@@ -18,10 +18,10 @@ async function createUser(
 }
 
 async function loginUser(
-  name,
+  username,
   password
 ) {
-  const result = await User.findOne({ name, password})
+  const result = await User.findOne({ username, password})
 
   return result;
 }
