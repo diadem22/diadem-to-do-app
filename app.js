@@ -29,10 +29,10 @@ app.use(express.json());
         .json({ message: 'Password less than 6 characters' });
     }
     try {
-    await createUser({
-      username: username,
-      password: password,
-    })
+    await createUser(
+      username= username,
+      password= password,
+    )
       .then((user) =>
         res.status(200).json({
           message: "User successfully created",
