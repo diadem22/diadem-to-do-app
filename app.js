@@ -22,7 +22,6 @@ app.use(express.json());
 
   app.post('/to-do/create-user', async (req, res, next) => {
     const { username, password } = req.body;
-
     
     if (password.length < 6) {
       return res
@@ -37,7 +36,7 @@ app.use(express.json());
       .then((user) =>
         res.status(200).json({
           message: "User successfully created",
-           user,
+          id: user._id
         })
       )
       .catch((error) =>
@@ -54,12 +53,14 @@ app.use(express.json());
   } 
 })
 
-  app.get('/to-do/login', async (req, res, next) => {
+  app.post('/to-do/login', async (req, res, next) => {
     const { username, password } = req.body;
 
     try {
       const user = await loginUser(username, password);
-        if (user) {
+        if (!user) {
+          res.status(400).json({ message: 'Invalid username or password' });
+        }else{
           const maxAge = 3 * 60 * 60;
           const token = jwt.sign(
             { id: user._id, username },
@@ -73,9 +74,7 @@ app.use(express.json());
             user: user._id,
             token: token
           });
-        } else {
-          res.status(400).json({ message: "Login not succesful" });
-        }
+        } 
     }catch (error) {
     res.status(400).json({
       message: "An error occurred",
