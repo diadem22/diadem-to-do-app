@@ -1,6 +1,7 @@
 const { Activity } = require('../models/activity')
 
 async function createActivity(
+  user_id,
   name,
   category,
   date,
