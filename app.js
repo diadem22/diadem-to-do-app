@@ -30,8 +30,8 @@ app.use(express.json());
     }
     try {
     await createUser(
-      username= username,
-      password= password,
+      username,
+      password
     )
       .then((user) =>
         res.status(200).json({
