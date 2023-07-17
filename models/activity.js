@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const { User } = require('./user');
 
 dotenv.config()
 
@@ -14,7 +13,6 @@ mongoose
   const activitySchema = new mongoose.Schema({
     user_id: {
       type: String,
-      ref: User,
       required: true
     },
     name: { type: String, required: true },

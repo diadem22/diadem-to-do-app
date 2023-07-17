@@ -9,6 +9,7 @@ const {
   fetchById,
 } = require('./controllers/activity');
 const { createUser, loginUser } = require('./controllers/user')
+const { verifyToken } = require('./middleware/auth')
 
 app.use(express.urlencoded({ extended: false }));
 dotenv.config();
@@ -84,7 +85,7 @@ app.use(express.json());
     }
   );
 
-  app.post('/to-do/create-activity', async (req, res, next) => {
+  app.post('/to-do/create-activity', verifyToken, async (req, res, next) => {
     const { user_id, name, category, date, isPublished, priority } = req.body;
 
     try {
@@ -105,7 +106,7 @@ app.use(express.json());
   });
 
   
-    app.put('/to-do/update-activity', async (req, res, next) => {
+    app.put('/to-do/update-activity', verifyToken, async (req, res, next) => {
     const { id, name, priority, category } = req.body;
 
     try {
@@ -118,7 +119,7 @@ app.use(express.json());
     }
   }); 
 
-  app.get('/to-do/fetch', async (req, res, next) => {
+  app.get('/to-do/fetch', verifyToken, async (req, res, next) => {
     const { user_id } = req.body;
 
     try {
