@@ -5,7 +5,7 @@ const {
   createActivity,
   updateActivity,
   fetchById,
-} = require('./controllers/activity');
+} = require('../controllers/activity');
 
 const { verifyToken } = require('../middleware/auth');
 
