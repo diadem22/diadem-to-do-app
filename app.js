@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const userRoute = require('./routes/user')
-const activityRoute = require('./routes/activity')
+const userRoute = require('../routes/user')
+const activityRoute = require('../routes/activity')
 const app = express();
 
 

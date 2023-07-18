@@ -4,9 +4,7 @@ const { User } = require('../models/user');
 const {createUser, loginUser } = require('../controllers/user')
 const router = express.Router();
 
-module.exports = (app) => {
-    app.use('/user', router);
-
+module.exports = () => {
     router.post('/create', async (req, res, next) => {
     const { username, password } = req.body;
     

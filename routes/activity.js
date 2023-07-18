@@ -11,10 +11,8 @@ const { verifyToken } = require('../middleware/auth');
 
 const router = express.Router();
 
-module.exports = (app) => {
-    app.use('/activity', router);
-
-    router.post(
+module.exports = () => {
+     router.post(
       '/create',
       verifyToken,
       async (req, res, next) => {
