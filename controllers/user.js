@@ -5,25 +5,18 @@ async function createUser(
   password
 ) {
 
-  const exist = User.findOne({username})
+  let user = new User({
+    username: username,
+    password: password
+  })
 
-  if(exist){
-    return {message: 'username already exist'}
-  } else {
-    let user = new User({
-      username: username,
-      password: password,
-    });
-
-    try {
-      const result = await user.save();
-      return result;
-    } catch (ex) {
-      for (field in ex.errors) console.log(ex.errors[field].message);
-    }
+  try {
+    const result = await user.save();
+    return result;
+  } catch (ex) {
+    for (field in ex.errors) console.log(ex.errors[field].message);
   }
-  }
-  
+}
 
 async function loginUser(
   username,
