@@ -5,6 +5,7 @@ const {createUser, loginUser } = require('../controllers/user')
 const router = express.Router();
 
 module.exports = (app) => {
+    app.use('/user', router);
 
     router.post('/create', async (req, res, next) => {
     const { username, password } = req.body;
