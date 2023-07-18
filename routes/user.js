@@ -4,7 +4,6 @@ const { User } = require('../models/user');
 const {createUser, loginUser } = require('../controllers/user')
 const router = express.Router();
 
-module.exports = () => {
     router.post('/create', async (req, res, next) => {
     const { username, password } = req.body;
     
@@ -76,4 +75,5 @@ module.exports = () => {
   }
     }
   );
-  }
+ 
+  module.exports = router

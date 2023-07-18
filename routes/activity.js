@@ -11,8 +11,8 @@ const { verifyToken } = require('../middleware/auth');
 
 const router = express.Router();
 
-module.exports = () => {
-     router.post(
+
+    router.post(
       '/create',
       verifyToken,
       async (req, res, next) => {
@@ -68,4 +68,5 @@ module.exports = () => {
         return next(error);
       }
     });
-}
+
+module.exports = router
