@@ -17,33 +17,31 @@ router.post('/create', async (req, res, next) => {
         .json({ message: 'Password less than 6 characters' });
     }
 
-    const exist = await User.findOne({ username });
+    // const exist = await User.findOne({ username });
 
-    if (exist.username == username) {
-      return res.status(400).json({ message: 'Username already exists' });
-    } else {
-      try {
-        await createUser(username, password)
-          .then((user) =>
-            res.status(200).json({
-              message: 'User successfully created',
-              id: user._id,
-            })
-          )
-          .catch((error) =>
-            res.status(400).json({
-              message: 'User not successful created',
-              error: error.message,
-            })
-          );
+    // if (exist.username == username) {
+    //   return res.status(400).json({ message: 'Username already exists' });
+    // } 
+    try {
+      await createUser(username, password)
+            .then((user) =>
+              res.status(200).json({
+                message: 'User successfully created',
+                id: user._id,
+              })
+            )
+            .catch((error) =>
+              res.status(400).json({
+                message: 'User not successful created',
+                error: error.message,
+              })
+            );
       } catch (error) {
-        res.status(400).json({
-          message: 'An error occurred',
-          error: error.message,
-        });
-      } 
-    } 
-    
+    res.status(400).json({
+      message: "An error occurred",
+      error: error.message,
+    });
+  } 
 })
 
 router.post('/login', async (req, res, next) => {
