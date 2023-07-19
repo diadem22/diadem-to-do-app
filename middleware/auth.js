@@ -31,8 +31,17 @@ async function verifyToken (req, res, next) {
 //   });
 
       try {
-    const decoded = jwt.verify(cookie, process.env.SECRET_TOKEN);
-    req.user = decoded;
+    jwt.verify(cookie, process.env.SECRET_TOKEN,  async (err, decoded) => {
+        if (err) {
+            return res.sendStatus(403);
+        }
+
+    const { id } = decoded; 
+    const user = await User; 
+    const { password, ...data } = user._doc; 
+    req.user = data; 
+    next();
+    })
   } catch (err) {
     return res.status(401).send('Invalid Token');
   }

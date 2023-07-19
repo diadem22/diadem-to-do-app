@@ -16,12 +16,6 @@ router.post('/create', async (req, res, next) => {
         .status(400)
         .json({ message: 'Password less than 6 characters' });
     }
-
-    // const exist = await User.findOne({ username });
-
-    // if (exist.username == username) {
-    //   return res.status(400).json({ message: 'Username already exists' });
-    // } 
     try {
       await createUser(username, password)
             .then((user) =>
