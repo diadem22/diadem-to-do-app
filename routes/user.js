@@ -17,13 +17,13 @@ router.post('/create', async (req, res, next) => {
         .json({ message: 'Password less than 6 characters' });
     }
 
-    const exist = await User.findOne({ username });
+    // const exist = await User.findOne({ username });
 
-    if (exist.username == username) {
-      return res
-        .status(400)
-        .json({ message: 'Username already exists' });
-    }
+    // if (exist.username == username) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: 'Username already exists' });
+    // }
     try {
     await createUser(
       username,
@@ -63,7 +63,9 @@ router.post('/login', async (req, res, next) => {
           secure: true,
           sameSite: 'None',
           };
-        const token = user.generateAccessJWT(); 
+        const token = jwt.sign({id: user._id}, process.env.SECRET_TOKEN, {
+          expiresIn: '20m',
+        });
         res.cookie('token', token, options); 
         res.status(200).json({
         status: 'success',
