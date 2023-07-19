@@ -24,20 +24,21 @@ router.post('/create', async (req, res, next) => {
         return res
           .status(400)
           .json({ message: 'Username already exists' });
-      }
-      await createUser(username, password)
-        .then((user) =>
-          res.status(200).json({
-            message: 'User successfully created',
-            id: user._id,
-          })
-        )
-        .catch((error) =>
-          res.status(400).json({
-            message: 'User not successful created',
-            error: error.message,
-          })
-        );
+      } else {
+          await createUser(username, password)
+            .then((user) =>
+              res.status(200).json({
+                message: 'User successfully created',
+                id: user._id,
+              })
+            )
+            .catch((error) =>
+              res.status(400).json({
+                message: 'User not successful created',
+                error: error.message,
+              })
+            );
+      } 
     }catch (error) {
     res.status(400).json({
       message: "An error occurred",
