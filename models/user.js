@@ -1,20 +1,29 @@
-const { randomUUID } = require('crypto');
+const jwt =  require('jsonwebtoken');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 
-const userSchema = new mongoose.Schema({
+dotenv.config();
+const UserSchema = new mongoose.Schema({
   username: {
     type: String,
-    unique: true
+    unique: true,
   },
   password: {
     type: String,
     minlength: 6,
     required: true,
-  }
+  },
 });
 
-const User = mongoose.model(
-  'User', userSchema
-); 
+UserSchema.methods.generateAccessJWT = function () {
+  let payload = {
+    id: this._id,
+  };
+  return jwt.sign(payload, process.env.SECRET_TOKEN, {
+    expiresIn: '20m',
+  });
+};
 
-module.exports = { User }
+const User = mongoose.model('User', UserSchema);
+
+module.exports = { User };
