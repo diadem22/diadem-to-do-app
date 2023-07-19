@@ -11,7 +11,7 @@ async function createUser(
   const exist = await User.findOne({ username });
 
   if (exist.username == username) {
-    return res.status(400).json({ message: 'Username already exists' });
+    return { message: 'Username already exists' };
   }
   try {
     const result = await user.save();
