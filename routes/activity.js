@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const { Joi, Segments } = require('celebrate');
 
 const {
   createActivity,
@@ -8,31 +9,42 @@ const {
 } = require('../controllers/activity');
 
 const { verifyToken, verifyUser } = require('../middleware/auth');
+const { validate } = require('../middleware/validate');
 
 const router = express.Router();
 
-router.post('/create', verifyToken, async (req, res, next) => {
-  const { user_id, name, category, date, isPublished, priority } = req.body;
+router.post(
+  '/create',
+  validate({
+    [Segments.BODY]: Joi.object({
+      user_id: Joi.string().required(),
+      name: Joi.string().required(),
+      category: Joi.string()
+        .required()
+        .valid('spiritual', 'career', 'exercise', 'personal'),
+      date: Joi.date(),
+      isPublished: Joi.boolean(),
+      priority: Joi.string().required().valid('high', 'low'),
+    }),
+  }),
+  verifyToken,
+  async (req, res, next) => {
 
-  try {
-    const activity = await createActivity(
-      user_id,
-      name,
-      category,
-      date,
-      isPublished,
-      priority
-    );
-    
-    return res.status(200).json({
-      data: activity,
-      success: true,
-      message: 'Activity created',
-    });
-  } catch (error) {
-    return next(error);
+    try {
+      const activity = await createActivity(
+        req.body
+      );
+
+      return res.status(200).json({
+        data: activity,
+        success: true,
+        message: 'Activity created',
+      });
+    } catch (error) {
+      return next(error);
+    }
   }
-});
+);
 
 router.put('/update', verifyToken, async (req, res, next) => {
   const { id, name, priority, category } = req.body;
