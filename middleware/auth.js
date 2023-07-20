@@ -61,6 +61,7 @@ async function verifyUsername(req, res, next) {
     const exist = await User.findOne({ username: name });
     try {
         if (!exist) return next();
+        else res.status(401).send('Username exists');
     } catch (error) {
         return res.status(401).send('Username exists');
     }
