@@ -57,19 +57,13 @@ async function verifyAccess (req, res, next) {
 
 async function verifyUsername(req, res, next) {
     const name = req.body['username']
+
+    const exist = User.findOne({ username: name });
     try {
-        const exist = User.findOne({ username: name})
-        if (!exist) {
-          return next();
-        } else {
-             return res
-               .status(401)
-               .json({ message: 'Username exist' });
-        }
+        if (!exist) return next();
     } catch (error) {
-        console.log(error)
+        return res.status(401).send('Username exists');
     }
-    return next()
 }
 
 module.exports = {
