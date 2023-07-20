@@ -9,25 +9,15 @@ const {
 } = require('../controllers/activity');
 
 const { verifyToken, verifyAccess } = require('../middleware/auth');
-const { validate } = require('../middleware/validate');
+// const { validate } = require('../middleware/validate');
+// const validateRequest = validate(true);
 
 const router = express.Router();
 
 router.post(
   '/create',
-  validate({
-    [Segments.BODY]: Joi.object({
-      user_id: Joi.string().required(),
-      name: Joi.string().required(),
-      category: Joi.string()
-        .required()
-        .valid('spiritual', 'career', 'exercise', 'personal'),
-      date: Joi.date(),
-      isPublished: Joi.boolean(),
-      priority: Joi.string().required().valid('high', 'low'),
-    }),
-  }),
   verifyToken,
+//   validateRequest,
   async (req, res, next) => {
 
     try {
