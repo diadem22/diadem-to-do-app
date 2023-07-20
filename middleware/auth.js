@@ -37,7 +37,7 @@ async function verifyToken (req, res, next) {
         return next();
 };
 
-async function verifyUser (req, res, next) {
+async function verifyAccess (req, res, next) {
     const user_id = req.body['user_id'];
     const authHeader = req.headers['cookie'];
 
@@ -52,10 +52,27 @@ async function verifyUser (req, res, next) {
     } catch (error) {
         return res.status(401).send('Access Not Authorized');
     }
-    
+
 }
 
-module.exports = { 
-    verifyToken,
-    verifyUser
- };
+async function verifyUsername(req, res, next) {
+    const name = req.body['username']
+    try {
+        const exist = User.findOne({ username: name})
+        if (!exist) {
+          return next();
+        } else {
+             return res
+               .status(401)
+               .json({ message: 'Username exist' });
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+module.exports = {
+  verifyToken,
+  verifyAccess,
+  verifyUsername
+};

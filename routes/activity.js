@@ -8,7 +8,7 @@ const {
   fetchById,
 } = require('../controllers/activity');
 
-const { verifyToken, verifyUser } = require('../middleware/auth');
+const { verifyToken, verifyAccess } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
 
 const router = express.Router();
@@ -34,7 +34,8 @@ router.post(
       const activity = await createActivity(
         req.body
       );
-
+    
+      
       return res.status(200).json({
         data: activity,
         success: true,
@@ -59,7 +60,7 @@ router.put('/update', verifyToken, async (req, res, next) => {
   }
 });
 
-router.get('/fetch', verifyToken, verifyUser, async (req, res, next) => {
+router.get('/fetch', verifyToken, verifyAccess, async (req, res, next) => {
   const { user_id } = req.body;
 
   try {
