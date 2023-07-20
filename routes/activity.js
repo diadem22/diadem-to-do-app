@@ -7,7 +7,7 @@ const {
   fetchById,
 } = require('../controllers/activity');
 
-const { verifyToken } = require('../middleware/auth');
+const { verifyToken, verifyUser } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -46,7 +46,7 @@ router.put('/update', verifyToken, async (req, res, next) => {
   }
 });
 
-router.get('/fetch', verifyToken, async (req, res, next) => {
+router.get('/fetch', verifyToken, verifyUser, async (req, res, next) => {
   const { user_id } = req.body;
 
   try {

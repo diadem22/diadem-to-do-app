@@ -1,9 +1,0 @@
-{
-    "env": {
-        "MONGO_USER": "Ifeoluwa",
-        "MONGO_PASSWORD": "Gbenro",
-        "PORT": 6000,
-        "MONGO_DEFAULT_DATABASE": "test",
-        "MONGO_URI": "mongodb+srv://Ifeoluwa:Gbenro@clustertest.ps0lptp.mongodb.net/test"
-    }
-}

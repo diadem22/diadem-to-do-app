@@ -1,6 +1,7 @@
 const { User } = require('../models/user');
 
 async function createUser(
+  res,
   username,
   password
 ) {
@@ -11,7 +12,7 @@ async function createUser(
   const exist = await User.findOne({ username });
 
   if (exist.username == username) {
-    return { message: 'Username already exists' };
+    return res.status(400).json({ message: 'Username already exists' });
   }
   try {
     const result = await user.save();
