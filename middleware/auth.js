@@ -69,6 +69,7 @@ async function verifyUsername(req, res, next) {
     } catch (error) {
         console.log(error)
     }
+    return next()
 }
 
 module.exports = {

@@ -9,7 +9,7 @@ const {
 } = require('../controllers/blacklist');
 const { verifyUsername } = require('../middleware/auth');
 
-router.post('/create', async (req, res, next) => {
+router.post('/create', verifyUsername, async (req, res, next) => {
     const { username, password } = req.body;
     
     if (password.length < 6) {
