@@ -1,4 +1,3 @@
-const RequestHandler = require('express');
 const schemas = require('./schemas');
 
 const supportedMethods = ['post', 'put', 'patch', 'delete'];

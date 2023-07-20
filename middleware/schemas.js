@@ -27,4 +27,4 @@ const schemas = {
   '/user/create': userSchema,
 };
 
-module.exports = { schemas }
+module.exports =  schemas 
