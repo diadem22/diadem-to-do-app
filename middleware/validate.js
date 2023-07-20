@@ -1,60 +1,53 @@
-const _ = require('lodash');
-const Joi = require('joi');
-const Schemas = require('./schemas');
+const RequestHandler = require('express');
+const schemas = require('./schemas');
 
-const validate = (useJoiError = false) => {
-  const _useJoiError = _.isBoolean(useJoiError) && useJoiError;
+const supportedMethods = ['post', 'put', 'patch', 'delete'];
 
-  const _supportedMethods = ['post', 'put'];
+const validationOptions = {
+  abortEarly: false,
+  allowUnknown: false,
+  stripUnknown: false,
+};
 
-  const _validationOptions = {
-    abortEarly: false, 
-    allowUnknown: true, 
-    stripUnknown: true, 
-  };
+const schemaValidator = (path, useJoiError = true) => {
+  const schema = schemas[path];
+
+  if (!schema) {
+    throw new Error(`Schema not found for path: ${path}`);
+  }
 
   return (req, res, next) => {
-    const route = req.route.path;
     const method = req.method.toLowerCase();
 
-    if (_.includes(_supportedMethods, method) && _.has(Schemas, route)) {
-      const _schema = _.get(Schemas, route);
-
-      if (_schema) {
-        return Joi.validate(
-          req.body,
-          _schema,
-          _validationOptions,
-          (err, data) => {
-            if (err) {
-              const JoiError = {
-                status: 'failed',
-                error: {
-                  original: err._object,
-                  details: _.map(err.details, ({ message, type }) => ({
-                    message: message.replace(/['"]/g, ''),
-                    type,
-                  })),
-                },
-              };
-
-              const CustomError = {
-                status: 'failed',
-                error:
-                  'Invalid request data. Please review request and try again.',
-              };
-
-              res.status(422).json(_useJoiError ? JoiError : CustomError);
-            } else {
-              req.body = data;
-              next();
-            }
-          }
-        );
-      }
+    if (!supportedMethods.includes(method)) {
+      return next();
     }
-    next();
+
+    const { error, value } = schema.validate(req.body, validationOptions);
+
+    if (error) {
+      const customError = {
+        status: 'failed',
+        error: 'Invalid request. Please review the request and try again.',
+      };
+
+      const joiError = {
+        status: 'failed',
+        error: {
+          original: error._original,
+          details: error.details.map(({ message, type }) => ({
+            message: message.replace(/['"]/g, ''),
+            type,
+          })),
+        },
+      };
+
+      return res.status(422).json(useJoiError ? joiError : customError);
+    }
+
+    req.body = value;
+    return next();
   };
 };
 
-module.exports = { validate }
+module.exports = {schemaValidator};

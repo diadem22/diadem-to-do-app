@@ -8,21 +8,20 @@ const {
   createBlackList,
 } = require('../controllers/blacklist');
 const { verifyUsername } = require('../middleware/auth');
-const { validate } = require('../middleware/validate');
-const validateRequest = validate(true);
+const { schemaValidator } = require('../middleware/validate');
 
 router.post(
   '/create',
-  // validateRequest,
+  schemaValidator('/user/create'),
   verifyUsername,
   async (req, res, next) => {
     const { username, password } = req.body;
 
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ message: 'Password less than 6 characters' });
-    }
+    // if (password.length < 6) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: 'Password less than 6 characters' });
+    // }
     try {
       await createUser(username, password)
         .then((user) =>

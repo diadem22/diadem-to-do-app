@@ -21,8 +21,10 @@ const userSchema = Joi.object().keys({
   password: Joi.string().min(6).required().strict()
 });
 
-module.exports = {
+const schemas = {
   '/activity/create': activitySchema,
   '/activity/update': updateSchema,
-  '/create-user': userSchema,
+  '/user/create': userSchema,
 };
+
+export default schemas;
