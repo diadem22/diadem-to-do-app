@@ -13,7 +13,7 @@ const validateRequest = validate(true);
 
 router.post(
   '/create-user',
-  validateRequest,
+  // validateRequest,
   verifyUsername,
   async (req, res, next) => {
     const { username, password } = req.body;
