@@ -23,7 +23,6 @@ router.post(
         .status(400)
         .json({ message: 'Password less than 6 characters' });
     }
-    await verifyUsername;
     try {
       await createUser(username, password)
         .then((user) =>
