@@ -58,7 +58,7 @@ async function verifyAccess (req, res, next) {
 async function verifyUsername(req, res, next) {
     const name = req.body['username']
 
-    const exist = User.findOne({ username: name });
+    const exist = await User.findOne({ username: name });
     try {
         if (!exist) return next();
     } catch (error) {
