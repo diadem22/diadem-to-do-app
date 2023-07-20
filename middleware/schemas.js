@@ -24,5 +24,5 @@ const userSchema = Joi.object().keys({
 module.exports = {
   '/activity/create': activitySchema,
   '/activity/update': updateSchema,
-  '/user/create': userSchema,
+  '/create-user': userSchema,
 };

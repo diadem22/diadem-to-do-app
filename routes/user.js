@@ -12,7 +12,7 @@ const { validate } = require('../middleware/validate');
 const validateRequest = validate(true);
 
 router.post(
-  '/create',
+  '/create-user',
   validateRequest,
   verifyUsername,
   async (req, res, next) => {
