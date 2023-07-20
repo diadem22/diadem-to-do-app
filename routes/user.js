@@ -9,7 +9,7 @@ const {
 } = require('../controllers/blacklist');
 const { verifyUsername } = require('../middleware/auth');
 
-router.post('/create', verifyUsername, async (req, res, next) => {
+router.post('/create', async (req, res, next) => {
     const { username, password } = req.body;
     
     if (password.length < 6) {
@@ -17,6 +17,7 @@ router.post('/create', verifyUsername, async (req, res, next) => {
         .status(400)
         .json({ message: 'Password less than 6 characters' });
     }
+    await verifyUsername;
     try {
       await createUser(username, password)
             .then((user) =>
