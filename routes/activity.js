@@ -23,6 +23,7 @@ router.post('/create', verifyToken, async (req, res, next) => {
       isPublished,
       priority
     );
+    
     return res.status(200).json({
       data: activity,
       success: true,

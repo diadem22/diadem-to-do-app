@@ -25,10 +25,10 @@ async function verifyToken (req, res, next) {
               return res.sendStatus(403);
             }
 
-            // const { id } = decoded;
-            // const user = await User;
-            // const { password, ...data } = user._doc;
-            // req.user = data;
+            const { id } = decoded;
+            const user = await User;
+            const { password, ...data } = user._doc;
+            req.user = data;
             next();
           });
         } catch (err) {
