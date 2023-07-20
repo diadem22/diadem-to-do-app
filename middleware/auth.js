@@ -63,7 +63,7 @@ async function verifyUsername(req, res, next) {
         if (!exist) return next();
         else res.status(401).send('Username exists');
     } catch (error) {
-        return res.status(401).send('Username exists');
+        return res.status(401).send('no username');
     }
 }
 
