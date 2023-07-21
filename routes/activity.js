@@ -9,23 +9,25 @@ const {
 } = require('../controllers/activity');
 
 const { verifyToken, verifyAccess } = require('../middleware/auth');
-// const { validate } = require('../middleware/validate');
-// const validateRequest = validate(true);
+const { schemaValidator } = require('../middleware/validate');
 
 const router = express.Router();
 
 router.post(
   '/create',
+  schemaValidator('/activity/create'),
   verifyToken,
-//   validateRequest,
   async (req, res, next) => {
-
     try {
+    const { user_id, name, category,  isPublished, priority } = req.body;
       const activity = await createActivity(
-        req.body
+        user_id,
+        name,
+        category,
+        isPublished,
+        priority
       );
-    
-      
+
       return res.status(200).json({
         data: activity,
         success: true,
