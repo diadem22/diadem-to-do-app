@@ -20,12 +20,12 @@ async function verifyToken (req, res, next) {
 
 
         try {
-          jwt.verify(cookie, process.env.SECRET_TOKEN, async (err, decoded) => {
+          jwt.verify(cookie, process.env.SECRET_TOKEN, async (err) => {
             if (err) {
               return res.sendStatus(403);
             }
 
-            const { id } = decoded;
+            // const { id } = decoded;
             // const user = await User;
             // const { password, ...data } = user._doc;
             // req.user = data;
