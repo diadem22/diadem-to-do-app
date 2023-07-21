@@ -22,7 +22,7 @@ mongoose
       enum: ['spiritual', 'career', 'exercise', 'personal'],
     },
     date: { type: Date, default: Date.now },
-    isPublished: Boolean,
+    isPublished: { type: Boolean},
     priority: {
       type: String,
       required: true,

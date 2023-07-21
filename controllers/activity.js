@@ -4,7 +4,6 @@ async function createActivity(
   user_id,
   name,
   category,
-  date,
   isPublished,
   priority
 ) {
@@ -13,8 +12,7 @@ async function createActivity(
     name: name,
     isPublished: isPublished,
     priority: priority,
-    category: category,
-    date: date,
+    category: category
   });
 
   try {
