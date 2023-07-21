@@ -29,7 +29,7 @@ async function verifyToken (req, res, next) {
             // const user = await User;
             // const { password, ...data } = user._doc;
             // req.user = data;
-            next();
+            // next();
           });
         } catch (err) {
           return res.status(401).send('Invalid Token');
