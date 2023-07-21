@@ -17,6 +17,7 @@ router.post(
   '/create',
   schemaValidator('/activity/create'),
   verifyToken,
+  verifyAccess,
   async (req, res, next) => {
     try {
     const { user_id, name, category,  isPublished, priority } = req.body;
