@@ -18,8 +18,8 @@ async function verifyToken (req, res, next) {
             .status(401)
             .json({ message: 'Session expired. Please re-login' });
 
-
         try {
+
           jwt.verify(cookie, process.env.SECRET_TOKEN, async (err) => {
             if (err) {
               return res.sendStatus(403);
@@ -42,11 +42,11 @@ async function verifyAccess (req, res, next) {
     const user = await User.findOne({ _id: user_id})
     
     try {
-        if (user.token == cookie) next();
+        if (user.token == cookie) return next();
     } catch (error) {
         return res.status(401).send('Access Not Authorized');
     }
-
+      return next();
 }
 
 async function verifyUsername(req, res, next) {
