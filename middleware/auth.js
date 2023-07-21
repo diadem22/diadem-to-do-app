@@ -24,12 +24,6 @@ async function verifyToken (req, res, next) {
             if (err) {
               return res.sendStatus(403);
             }
-
-            // const { id } = decoded;
-            // const user = await User;
-            // const { password, ...data } = user._doc;
-            // req.user = data;
-            // next();
           });
         } catch (err) {
           return res.status(401).send('Invalid Token');
