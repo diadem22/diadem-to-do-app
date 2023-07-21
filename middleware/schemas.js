@@ -25,6 +25,7 @@ const schemas = {
   '/activity/create': activitySchema,
   '/activity/update': updateSchema,
   '/user/create': userSchema,
+  '/user/login': userSchema
 };
 
 module.exports =  schemas 
