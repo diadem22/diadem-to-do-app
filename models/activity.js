@@ -15,7 +15,10 @@ mongoose
       type: String,
       required: true
     },
-    name: { type: String, required: true },
+    name: { 
+      type: String, 
+      unique: true,
+      required: true },
     category: {
       type: String,
       required: true,

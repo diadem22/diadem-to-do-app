@@ -27,7 +27,7 @@ async function updateActivity(user_id, id, name, category, priority) {
   const result = await Activity.findOneAndUpdate(
     {
       user_id: user_id,
-      _id: id
+      id: id
     },
     {
       $set: {
