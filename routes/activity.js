@@ -44,18 +44,24 @@ router.post(
   }
 );
 
-router.put('/update', verifyToken, async (req, res, next) => {
-  const { id, name, priority, category } = req.body;
+router.put(
+  '/update',
+  schemaValidator('/activity/update'),
+  verifyToken,
+  verifyAccess,
+  async (req, res, next) => {
+    const { user_id, id, name, priority, category } = req.body;
 
-  try {
-    const activity = await updateActivity(id, name, category, priority);
-    return res
-      .status(200)
-      .json({ data: activity, success: true, message: 'Activity updated' });
-  } catch (error) {
-    return next(error);
+    try {
+      const activity = await updateActivity(id, name, category, priority);
+      return res
+        .status(200)
+        .json({ data: activity, success: true, message: 'Activity updated' });
+    } catch (error) {
+      return next(error);
+    }
   }
-});
+);
 
 router.get('/fetch', verifyToken, verifyAccess, async (req, res, next) => {
   const { user_id } = req.body;
