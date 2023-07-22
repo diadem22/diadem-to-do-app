@@ -1,6 +1,5 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const { Joi, Segments } = require('celebrate');
 
 const {
   createActivity,
@@ -8,7 +7,11 @@ const {
   fetchById,
 } = require('../controllers/activity');
 
-const { verifyToken, verifyAccess } = require('../middleware/auth');
+const {
+  verifyToken,
+  verifyAccess,
+  checkActivityName,
+} = require('../middleware/auth');
 const { schemaValidator } = require('../middleware/validate');
 
 const router = express.Router();
@@ -18,6 +21,7 @@ router.post(
   schemaValidator('/activity/create'),
   verifyToken,
   verifyAccess,
+  checkActivityName,
   async (req, res, next) => {
     try {
     const { user_id, name, category,  isPublished, priority } = req.body;

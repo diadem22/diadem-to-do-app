@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models/user');
 const { Blacklist } = require('../models/blacklist');
+const { Activity } = require('../models/activity');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -61,8 +62,22 @@ async function verifyUsername(req, res, next) {
     }
 }
 
+async function checkActivityName(req, res, next) {
+  const name = req.body['name'];
+  const user_id = req.body['user_id'];
+
+  const exist = await Activity.findOne({ name: name, user_id: user_id });
+  try {
+    if (!exist) return next();
+    else res.status(401).send('Activity exists');
+  } catch (error) {
+    return res.status(401).send('no activity');
+  }
+}
+
 module.exports = {
   verifyToken,
   verifyAccess,
-  verifyUsername
+  verifyUsername,
+  checkActivityName
 };
