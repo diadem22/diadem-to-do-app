@@ -45,7 +45,9 @@ async function verifyAccess (req, res, next) {
     try {
         if (user.token == cookie) return next();
     } catch (error) {
-        return res.status(401).send('Access Not Authorized');
+        return res.status(400).json({
+          message: 'Access not Authorized',
+        });
     }
       return next();
 }
@@ -56,7 +58,9 @@ async function verifyUsername(req, res, next) {
     const exist = await User.findOne({ username: name });
     try {
         if (!exist) return next();
-        else res.status(401).send('Username exists');
+        else res.status(400).json({
+          message: 'Username exists',
+        });
     } catch (error) {
         return res.status(401).send('no username');
     }
@@ -69,7 +73,9 @@ async function checkActivityName(req, res, next) {
   const exist = await Activity.findOne({ name: name, user_id: user_id });
   try {
     if (!exist) return next();
-    else res.status(401).send('Activity exists');
+    else return res.status(400).json({
+      message: 'Activity',
+    });
   } catch (error) {
     return res.status(401).send('no activity');
   }

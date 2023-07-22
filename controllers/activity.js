@@ -38,7 +38,7 @@ async function updateActivity(user_id,  name, category, priority) {
       },  
     },
     {
-      new: true
+      sort: { "points" : 1 }, upsert:true, returnNewDocument : true 
     }
   );
 
