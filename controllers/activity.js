@@ -23,8 +23,9 @@ async function createActivity(
   }
 }
 
-async function updateActivity(id, name, category, priority) {
-  const result = await Activity.findByIdAndUpdate(
+async function updateActivity(user_id, id, name, category, priority) {
+  const result = await Activity.findOneAndUpdate(
+    user_id,
     id,
     {
       $set: {
@@ -33,8 +34,7 @@ async function updateActivity(id, name, category, priority) {
         category: category,
         priority: priority,
       },
-    },
-    { new: true }
+    }
   );
 
   return result;
