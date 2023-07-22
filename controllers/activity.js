@@ -32,13 +32,14 @@ async function updateActivity(user_id,  name, category, priority) {
     },
     {
       $set: {
+        user_id: user_id,
         isPublished: true,
         category: category,
         priority: priority,
       },  
     },
     {
-      sort: { "points" : 1 }, upsert:true, returnNewDocument : true 
+      returnNewDocument : true 
     }
   );
 

@@ -50,10 +50,10 @@ router.put(
   verifyToken,
   verifyAccess,
   async (req, res, next) => {
-    const { user_id, id, name, priority, category } = req.body;
+    const { user_id, name, priority, category } = req.body;
 
     try {
-      const activity = await updateActivity(id, name, category, priority);
+      const activity = await updateActivity(user_id, name, category, priority);
       return res
         .status(200)
         .json({ data: activity, success: true, message: 'Activity updated' });
