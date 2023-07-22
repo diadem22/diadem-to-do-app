@@ -74,7 +74,7 @@ async function checkActivityName(req, res, next) {
   try {
     if (!exist) return next();
     else return res.status(400).json({
-      message: 'Activity',
+      message: 'Activity exists',
     });
   } catch (error) {
     return res.status(401).send('no activity');
