@@ -23,15 +23,15 @@ async function createActivity(
   }
 }
 
-async function updateActivity(user_id, id, name, category, priority) {
+async function updateActivity(user_id,  name, category, priority) {
   const result = await Activity.findOneAndUpdate(
     {
+      name: name,
       user_id: user_id,
-      id: id
+      
     },
     {
       $set: {
-        name: name,
         isPublished: true,
         category: category,
         priority: priority,
