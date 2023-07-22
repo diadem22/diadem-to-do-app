@@ -14,6 +14,12 @@ const activitySchema = Joi.object().keys({
 const updateSchema = Joi.object().keys({
   user_id: Joi.string().required(),
   id: Joi.string().required(),
+  name: Joi.string(),
+  category: Joi.string()
+    .valid('spiritual', 'career', 'exercise', 'personal'),
+  date: Joi.date(),
+  isPublished: Joi.boolean(),
+  priority: Joi.string().valid('high', 'low'),
 });
 
 const userSchema = Joi.object().keys({
