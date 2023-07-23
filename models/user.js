@@ -2,11 +2,18 @@ const jwt =  require('jsonwebtoken');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
-dotenv.config();
+
+// const { connectToDatabase } = require('./index');
+
+// dotenv.config();
+
+// connectToDatabase();
+
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
     unique: true,
+    required: true
   },
   password: {
     type: String,

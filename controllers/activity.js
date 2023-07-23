@@ -7,19 +7,19 @@ async function createActivity(
   isPublished,
   priority
 ) {
-  let activity = new Activity({
+  const activity = new Activity({
     user_id: user_id,
     name: name,
     isPublished: isPublished,
     priority: priority,
     category: category
   });
-
+  // console.log('here first')
   try {
     const result = await activity.save();
     return result;
   } catch (ex) {
-    for (field in ex.errors) console.log(ex.errors[field].message);
+    for (field in ex.errors) return(ex.errors[field].message);
   }
 }
 
