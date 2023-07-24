@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "start": "node app.js",
-    "start-server": "node app.js"
+    "start-server": "node app.js",
+    "jest-coverage": "npm run jest -- --coverage"
   },
   "keywords": [
     "To",

@@ -1,13 +1,5 @@
-const jwt =  require('jsonwebtoken');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
 
-
-// const { connectToDatabase } = require('./index');
-
-// dotenv.config();
-
-// connectToDatabase();
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -25,14 +17,7 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
-UserSchema.methods.generateAccessJWT = function () {
-  let payload = {
-    id: this._id,
-  };
-  return jwt.sign(payload, process.env.SECRET_TOKEN, {
-    expiresIn: '20m',
-  });
-};
+
 
 const User = mongoose.model('User', UserSchema);
 

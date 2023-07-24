@@ -1,7 +1,7 @@
 const mockingoose = require('mockingoose');
-const { createActivity, updateActivity } = require('./activity'); 
+const { createActivity, updateActivity, fetchById } = require('./activity'); 
 
-const { Activity } = require('../models/activity')
+const { Activity } = require('../models/activity');
 mockingoose(Activity);
 
 describe('createActivity', () => {
@@ -37,7 +37,6 @@ describe('createActivity', () => {
   it('should handle errors during activity creation', async () => {
     mockingoose(Activity).toReturn(new Error('Mocked error'), 'save');
 
-    // try {
       const result = await createActivity(
         'user_id_2',
         'Test Activity 2',
@@ -46,15 +45,9 @@ describe('createActivity', () => {
         2
       );
 
-      // console.log(result)
-    // } catch (error) {
-    //   // console.log(error)
-    //   // expect(error).toBeInstanceOf(Error);
-    //   console.log('ife')
       expect(result).toEqual(
         '`caree` is not a valid enum value for path `category`.'
       );
-    // }
   }, 30000);
 }, 30000);
 
@@ -90,7 +83,47 @@ describe('updateActivity',  () => {
     expect(result.priority).toBe(updaedActivityData.priority);
     
   })
+})
 
+describe('fetchById', () => {
+  it('should fetch all activities for the user', async () => {
+    const mockActivityData = {
+      user_id: 'user_id_1'
+    };
+
+    const fetchedActivityData = [
+      {
+        user_id: 'user_id_1',
+        name: 'Test Activity 1',
+        category: 'career',
+        priority: 'high',
+        isPublished: true,
+      },
+      {
+        user_id: 'user_id_1',
+        name: 'Test Activity 3',
+        category: 'career',
+        priority: 'high',
+        isPublished: true,
+      },
+      {
+        user_id: 'user_id_1',
+        name: 'Test Activity 2',
+        category: 'career',
+        priority: 'high',
+        isPublished: true,
+      },
+    ];
+
+    mockingoose(Activity).toReturn(fetchedActivityData, 'find');
+
+    const result = await fetchById(
+      mockActivityData.user_id
+    );
+
+    expect(result[0].category).toBe(fetchedActivityData[0].category);
+    expect(result[0].priority).toBe(fetchedActivityData[0].priority);
+  })
 })
 
 
