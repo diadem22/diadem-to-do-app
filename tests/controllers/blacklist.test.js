@@ -1,5 +1,5 @@
-const { checkBlacklisted, createBlackList } = require('./blacklist');
-const { Blacklist } = require('../models/blacklist');
+const { checkBlacklisted, createBlackList } = require('../../src/controllers/blacklist');
+const { Blacklist } = require('../../src/models/blacklist');
 const mockingoose = require('mockingoose');
 
 describe('createBlackList', () => {

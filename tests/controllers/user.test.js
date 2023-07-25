@@ -1,7 +1,6 @@
-const { createUser, loginUser } = require('./user');
-const { User } = require('../models/user');
+const { createUser, loginUser } = require('../../src/controllers/user');
+const { User } = require('../../src/models/user');
 const mockingoose = require('mockingoose');
-const { describe } = require('node:test');
 
 describe('createUser', () => {
   it('should create a user', async () => {

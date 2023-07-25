@@ -1,4 +1,4 @@
-const { Blacklist } = require('./blacklist');
+const { Blacklist } = require('../../src/models/blacklist');
 const mockingoose = require('mockingoose');
 
 describe('Blacklist Model', () => {

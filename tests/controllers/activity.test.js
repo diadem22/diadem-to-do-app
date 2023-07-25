@@ -1,7 +1,7 @@
 const mockingoose = require('mockingoose');
-const { createActivity, updateActivity, fetchById } = require('./activity'); 
+const { createActivity, updateActivity, fetchById } = require('../../src/controllers/activity'); 
 
-const { Activity } = require('../models/activity');
+const { Activity } = require('../../src/models/activity');
 mockingoose(Activity);
 
 describe('createActivity', () => {

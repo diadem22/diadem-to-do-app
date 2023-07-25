@@ -1,5 +1,5 @@
 const mockingoose = require('mockingoose');
-const { Activity } = require('./activity');
+const { Activity } = require('../../src/models/activity');
 
 mockingoose(Activity);
 
