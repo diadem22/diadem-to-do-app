@@ -4,6 +4,9 @@ const cookieParser = require('cookie-parser');
 const userRoute = require('./src/routes/user');
 const activityRoute = require('./src/routes/activity')
 const dotenv = require('dotenv');
+const { connectToDatabase } = require('./index');
+
+connectToDatabase();
 
 dotenv.config();
 const app = express();

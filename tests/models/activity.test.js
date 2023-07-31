@@ -1,7 +1,6 @@
 const mockingoose = require('mockingoose');
 const { Activity } = require('../../src/models/activity');
 
-mockingoose(Activity);
 
 describe('Activity Model', () => {
   it('should create and return an activity', async () => {

@@ -1,9 +1,4 @@
 const mongoose = require('mongoose');
-// const dotenv = require('dotenv');
-
-const { connectToDatabase } = require('./index');
-
-connectToDatabase()
 
 const activitySchema = new mongoose.Schema({
   user_id: {
