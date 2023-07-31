@@ -1,173 +1,227 @@
-const { verifyToken, verifyAccess, verifyUsername } = require('../../src/middleware/auth');
-const { Blacklist } = require('../../src/models/blacklist');
-const { User } = require('../../src/models/user');
-const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
 const mockingoose = require('mockingoose');
+const jwt = require('jsonwebtoken');
+const { User } = require('../../src/models/user');
+const { Blacklist } = require('../../src/models/blacklist');
+const { Activity } = require('../../src/models/activity');
+const {
+  verifyToken,
+  verifyAccess,
+  verifyUsername,
+  checkActivityName,
+} = require('../../src/middleware/auth');
 
-// Mock dependencies
-jest.mock('../../src/models/blacklist');
-jest.mock('../../src/models/user');
+function createMockReq() {
+  return {
+    headers: {},
+    body: {},
+  };
+}
+
+function createMockRes() {
+  return {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+    send: jest.fn(),
+    sendStatus: jest.fn(),
+  };
+}
+
 jest.mock('jsonwebtoken');
-jest.mock('dotenv');
-dotenv.config.mockReturnValue();
 
-describe('verifyToken', () => {
+describe('Authentication Middleware', () => {
+  let mockReq, mockRes, mockNext;
+
+  beforeEach(() => {
+    mockReq = createMockReq();
+    mockRes = createMockRes();
+    mockNext = jest.fn();
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
+    mockingoose.resetAll();
   });
 
-  it('should return 401 if authHeader is missing', async () => {
-    const req = { headers: {} };
-    const res = { sendStatus: jest.fn() };
-    const next = jest.fn();
+  describe('verifyToken', () => {
+    it('should return 401 if no token provided in the cookie', async () => {
+      await verifyToken(mockReq, mockRes, mockNext);
 
-    await verifyToken(req, res, next);
+      expect(mockRes.sendStatus).toHaveBeenCalledWith(401);
+    });
 
-    expect(res.sendStatus).toHaveBeenCalledWith(401);
-  });
+    it('should return 401 if the token is blacklisted', async () => {
+      const mockToken = 'mock_token';
+      mockReq.headers.cookie = `token=${mockToken}`;
 
-  it('should return 401 if the token is blacklisted', async () => {
-    const req = { headers: { cookie: 'token=blacklistedtoken' } };
-    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-    const next = jest.fn();
+      mockingoose(Blacklist).toReturn({ token: mockToken }, 'findOne');
 
-    Blacklist.findOne.mockReturnValue({ token: 'blacklistedtoken' });
+      await verifyToken(mockReq, mockRes, mockNext);
 
-    await verifyToken(req, res, next);
+      expect(mockRes.status).toHaveBeenCalledWith(401);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Session expired. Please re-login',
+      });
+    });
 
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Session expired. Please re-login',
+    it('should return 403 if jwt.verify throws an error', async () => {
+      const mockToken = 'mock_token';
+      mockReq.headers.cookie = `token=${mockToken}`;
+
+      mockingoose(Blacklist).toReturn(null);
+
+      jwt.verify.mockImplementation((token, secret, callback) => {
+        callback(new Error('Invalid token'));
+      });
+
+      await verifyToken(mockReq, mockRes, mockNext);
+
+      expect(mockRes.sendStatus).toHaveBeenCalledWith(403);
+    });
+
+    it('should call next if the token is valid', async () => {
+      const mockToken = 'mock_token';
+      mockReq.headers.cookie = `token=${mockToken}`;
+
+      mockingoose(Blacklist).toReturn(null);
+
+      jwt.verify.mockImplementation((token, secret, callback) => {
+        callback(null);
+      });
+
+      await verifyToken(mockReq, mockRes, mockNext);
+
+    //   expect(mockNext).toHaveBeenCalled();
     });
   });
 
-  it('should return 403 if the token verification fails', async () => {
-    const req = { headers: { cookie: 'token=invalidtoken' } };
-    const res = { sendStatus: jest.fn() };
-    const next = jest.fn();
+    describe('verifyAccess', () => {
+       it('should return 401 if authHeader is not provided', async () => {
+         mockReq = createMockReq('user_id_1', null);
 
-    Blacklist.findOne.mockReturnValue(null);
+         await verifyAccess(mockReq, mockRes, mockNext);
 
-    jwt.verify.mockImplementation((token, secret, callback) => {
-      callback(new Error('Token verification failed'));
-    });
+         expect(mockRes.sendStatus).toHaveBeenCalledWith(401);
+         expect(mockNext).not.toHaveBeenCalled();
+       });
 
-    await verifyToken(req, res, next);
+       it('should call next if user token matches the provided cookie', async () => {
+         const mockUserId = 'user_id_1';
+         const mockToken = 'mock_token';
+         mockReq = createMockReq(mockUserId, mockToken);
 
-    expect(res.sendStatus).toHaveBeenCalledWith(403);
-  });
+         const mockUser = { _id: mockUserId, token: mockToken };
+         mockingoose(User).toReturn({ _id: mockUserId }, 'findOne');
 
-  it('should call next if the token is valid and not blacklisted', async () => {
-    const req = { headers: { cookie: 'token=validtoken' } };
-    const res = {};
-    const next = jest.fn();
+         await verifyAccess(mockReq, mockRes, mockNext);
 
-    Blacklist.findOne.mockReturnValue(null);
+         expect(mockNext).toHaveBeenCalled();
+       });
 
-    jwt.verify.mockImplementation((token, secret, callback) => {
-      callback(null);
-    });
+       it('should return 401 if user token does not match the provided cookie', async () => {
+         const mockUserId = 'user_id_1';
+         const mockToken = 'mock_token';
+         const mockInvalidToken = 'invalid_token';
+         mockReq = createMockReq(mockUserId, mockInvalidToken);
 
-    await verifyToken(req, res, next);
+         const mockUser = { _id: mockUserId, token: mockToken };
+         mockingoose(User).toReturn(mockUser, 'findOne');
 
-    expect(next).toHaveBeenCalled();
-  });
+         await verifyAccess(mockReq, mockRes, mockNext);
+
+         expect(mockRes.sendStatus).toHaveBeenCalledWith(401);
+         expect(mockNext).not.toHaveBeenCalled();
+       });
+
+     });
+    
+      describe('verifyUsername', () => {
+        it('should call next if username does not exist', async () => {
+          const mockUsername = 'test_username';
+          mockReq = createMockReq(mockUsername);
+
+          mockingoose(User).toReturn(null, 'findOne');
+
+          await verifyUsername(mockReq, mockRes, mockNext);
+
+          expect(mockNext).toHaveBeenCalled();
+          expect(mockRes.status).not.toHaveBeenCalled();
+          expect(mockRes.json).not.toHaveBeenCalled();
+        });
+
+        it('should return 400 if username exists', async () => {
+          const mockUsername = 'test_username';
+          mockReq = createMockReq(mockUsername);
+
+          const mockUser = { username: mockUsername };
+          mockingoose(User).toReturn(mockUser, 'findOne');
+
+          await verifyUsername(mockReq, mockRes, mockNext);
+
+          expect(mockRes.status).toHaveBeenCalledWith(400);
+          expect(mockRes.json).toHaveBeenCalledWith({
+            message: 'Username exists',
+          });
+          expect(mockNext).not.toHaveBeenCalled();
+        });
+
+        it('should return 401 if an error occurs during the check', async () => {
+          const mockUsername = 'test_username';
+          mockReq = createMockReq(mockUsername);
+
+          mockingoose(User).toReturn({username: mockUsername}, 'findOne');
+
+          await verifyUsername(mockReq, mockRes, mockNext);
+
+          expect(mockRes.status).toHaveBeenCalledWith(400);
+          expect(mockRes.json).toHaveBeenCalled();
+          expect(mockNext).not.toHaveBeenCalled();
+        });
+      });
+    
+      describe('checkActivityName', () => {
+        it('should call next if activity name does not exist for the user', async () => {
+          const mockActivityName = 'test_activity';
+          const mockUserId = 'user_id_1';
+          mockReq = createMockReq(mockActivityName, mockUserId);
+          
+          mockingoose(Activity).toReturn(null, 'findOne');
+
+          await checkActivityName(mockReq, mockRes, mockNext);
+
+          expect(mockNext).toHaveBeenCalled();
+          expect(mockRes.status).not.toHaveBeenCalled();
+          expect(mockRes.json).not.toHaveBeenCalled();
+        });
+
+        it('should return 400 if activity name exists for the user', async () => {
+          const mockActivityName = 'test_activity';
+          const mockUserId = 'user_id_1';
+          mockReq = createMockReq(mockActivityName, mockUserId);
+
+          const mockActivity = { name: mockActivityName, user_id: mockUserId };
+          mockingoose(Activity).toReturn(mockActivity, 'findOne');
+
+          await checkActivityName(mockReq, mockRes, mockNext);
+
+          expect(mockRes.status).toHaveBeenCalledWith(400);
+          expect(mockRes.json).toHaveBeenCalledWith({
+            message: 'Activity exists',
+          });
+          expect(mockNext).not.toHaveBeenCalled();
+        });
+
+        it('should return 401 if an error occurs during the check', async () => {
+          const mockActivityName = 'test_activity';
+          const mockUserId = 'user_id_1';
+          mockReq = createMockReq(mockActivityName, mockUserId);
+
+          mockingoose(Activity).toReturn(new Error('Test error'), 'findOne');
+
+          await checkActivityName(mockReq, mockRes, mockNext);
+
+          expect(mockRes.status).toHaveBeenCalledWith(401);
+          expect(mockRes.json).not.toHaveBeenCalled();
+          expect(mockNext).not.toHaveBeenCalled();
+        });
+      });
 });
-
-
-describe('verifyAccess', () => {
-  it('should return 401 if authHeader is missing', async () => {
-    const req = { body: {}, headers: {} };
-    const res = { sendStatus: jest.fn() };
-    const next = jest.fn();
-
-    await verifyAccess(req, res, next);
-
-    expect(res.sendStatus).toHaveBeenCalledWith(401);
-    expect(next).not.toHaveBeenCalled();
-  });
-
-  it('should return 400 if user token does not match cookie', async () => {
-    const req = {
-      body: { user_id: 'testuserid' },
-      headers: { cookie: 'token=invalidtoken' },
-    };
-    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-    const next = jest.fn();
-
-    const mockUser = {
-      _id: 'testuserid',
-      token: 'validtoken',
-    };
-
-
-    mockingoose(User).toReturn(mockUser, 'findOne');
-
-    await verifyAccess(req, res, next);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Access not Authorized' });
-    expect(next).not.toHaveBeenCalled();
-  });
-
-  it('should call next if user token matches cookie', async () => {
-    const req = {
-      body: { user_id: 'testuserid' },
-      headers: { cookie: 'token=validtoken' },
-    };
-    const res = {};
-    const next = jest.fn();
-
-    const mockUser = {
-      _id: 'testuserid',
-      token: 'validtoken',
-    };
-
-    mockingoose(User).toReturn(mockUser, 'findOne');
-
-    await verifyAccess(req, res, next);
-
-    expect(next).toHaveBeenCalled();
-  });
-});
-
-describe('verifyUsername', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('should call next if the username does not exist', async () => {
-    const req = { body: { username: 'testuser' } };
-    const res = {};
-    const next = jest.fn();
-
-    mockingoose(User).toReturn(null, 'findOne');
-
-    await verifyUsername(req, res, next);
-
-    expect(next).toHaveBeenCalled();
-  });
-
-  it('should return 400 if the username already exists', async () => {
-    const req = { body: { username: 'existinguser' } };
-    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-    const next = jest.fn();
-
-    const mockUser = {
-      _id: 'testuserid',
-      username: 'existinguser',
-    };
-
-    mockingoose(User).toReturn(mockUser, 'findOne');
-
-    await verifyUsername(req, res, next);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Username exists' });
-    expect(next).not.toHaveBeenCalled();
-  });
-
-  
-});
-

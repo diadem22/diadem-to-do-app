@@ -6,7 +6,6 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-
 async function verifyToken (req, res, next) {
     const authHeader = req.headers['cookie'];
 
@@ -41,14 +40,9 @@ async function verifyAccess (req, res, next) {
 
 
     const user = await User.findOne({ _id: user_id})
-    
-    try {
+   
         if (user.token == cookie) return next();
-    } catch (error) {
-         res.status(400).json({
-          message: 'Access not Authorized',
-        });
-    }
+    
       return next();
 }
 
