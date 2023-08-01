@@ -1,6 +1,6 @@
 const schemas = require('./schemas');
 
-const supportedMethods = ['post', 'put', 'patch', 'delete'];
+const supportedMethods = ['post', 'put', 'patch', 'delete', 'get'];
 
 const validationOptions = {
   abortEarly: false,

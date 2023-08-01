@@ -18,16 +18,11 @@ async function verifyToken (req, res, next) {
             .status(401)
             .json({ message: 'Session expired. Please re-login' });
 
-        try {
-
           jwt.verify(cookie, process.env.SECRET_TOKEN, async (err) => {
             if (err) {
               return res.sendStatus(403);
             }
           });
-        } catch (err) {
-          return res.status(401).send('Invalid Token');
-        }
         return next();
 };
 
@@ -50,14 +45,10 @@ async function verifyUsername(req, res, next) {
     const name = req.body['username']
 
     const exist = await User.findOne({ username: name });
-    try {
         if (!exist) return next();
         else res.status(400).json({
           message: 'Username exists',
         });
-    } catch (error) {
-        return res.status(401).send('no username');
-    }
 }
 
 async function checkActivityName(req, res, next) {
@@ -65,14 +56,10 @@ async function checkActivityName(req, res, next) {
   const user_id = req.body['user_id'];
 
   const exist = await Activity.findOne({ name: name, user_id: user_id });
-  try {
     if (!exist) return next();
     else return res.status(400).json({
       message: 'Activity exists',
     });
-  } catch (error) {
-    return res.status(401).send('no activity');
-  }
 }
 
 module.exports = {

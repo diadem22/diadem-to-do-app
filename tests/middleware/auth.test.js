@@ -107,7 +107,9 @@ describe('Authentication Middleware', () => {
        it('should call next if user token matches the provided cookie', async () => {
          const mockUserId = 'user_id_1';
          const mockToken = 'mock_token';
+         
          mockReq = createMockReq(mockUserId, mockToken);
+         mockReq.headers.cookie = `token=${mockToken}`;
 
          const mockUser = { _id: mockUserId, token: mockToken };
          mockingoose(User).toReturn({ _id: mockUserId }, 'findOne');
@@ -120,8 +122,10 @@ describe('Authentication Middleware', () => {
        it('should return 401 if user token does not match the provided cookie', async () => {
          const mockUserId = 'user_id_1';
          const mockToken = 'mock_token';
+         
          const mockInvalidToken = 'invalid_token';
          mockReq = createMockReq(mockUserId, mockInvalidToken);
+         mockReq.headers.cookie = `token=${mockToken}`;
 
          const mockUser = { _id: mockUserId, token: mockToken };
          mockingoose(User).toReturn(mockUser, 'findOne');
@@ -215,12 +219,13 @@ describe('Authentication Middleware', () => {
           const mockUserId = 'user_id_1';
           mockReq = createMockReq(mockActivityName, mockUserId);
 
-          mockingoose(Activity).toReturn(new Error('Test error'), 'findOne');
+          const mockActivity = { name: mockActivityName, user_id: mockUserId };
+
+          mockingoose(Activity).toReturn(mockActivity, 'findOne');
 
           await checkActivityName(mockReq, mockRes, mockNext);
 
-          expect(mockRes.status).toHaveBeenCalledWith(401);
-          expect(mockRes.json).not.toHaveBeenCalled();
+          expect(mockRes.status).toHaveBeenCalledWith(400);
           expect(mockNext).not.toHaveBeenCalled();
         });
       });
