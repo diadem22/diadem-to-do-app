@@ -37,10 +37,11 @@ async function verifyAccess(req, res, next) {
   
 
   const user = await User.findOne({ _id: user_id });
+
+    console.log(user);
   
 
-  if (user.token != cookie) {
-    console.log(user);
+  if (user.token == undefined || user.token != cookie) {
     return res.status(400).json({
       message: 'User not authorized',
     });
@@ -64,11 +65,17 @@ async function checkActivityName(req, res, next) {
   const user_id = req.body['user_id'];
 
   const exist = await Activity.findOne({ name: name, user_id: user_id });
-  if (!exist) return next();
-  else
+
+  console.log(exist)
+
+  try {
+    if (!exist) return next();
+  } catch (error) {
     return res.status(400).json({
       message: 'Activity exists',
     });
+  }
+    
 }
 
 module.exports = {
