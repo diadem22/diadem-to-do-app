@@ -37,9 +37,10 @@ async function verifyAccess(req, res, next) {
   
 
   const user = await User.findOne({ _id: user_id });
-  console.log(user.token);
+  
 
   if (user.token != cookie) {
+    console.log(user.token);
     return res.status(400).json({
       message: 'User not authorized',
     });
