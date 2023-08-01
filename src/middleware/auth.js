@@ -40,7 +40,7 @@ async function verifyAccess (req, res, next) {
         if (user.token == cookie) {
           return next();
         } else
-          res.status(400).json({
+          return res.status(400).json({
             message: 'User not authorized',
           });
     
