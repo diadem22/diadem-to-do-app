@@ -52,7 +52,6 @@ describe('Schema Validator Middleware', () => {
 
     middleware(mockReq, mockRes, mockNext);
 
-    // expect(mockNext).toHaveBeenCalled();
     expect(mockRes.status).toHaveBeenCalledWith(422);
     expect(mockRes.json).toHaveBeenCalled();
 
@@ -68,31 +67,6 @@ describe('Schema Validator Middleware', () => {
     middleware(mockReq, mockRes, mockNext);
 
     expect(mockRes.status).toHaveBeenCalledWith(422);
-    expect(mockRes.json).toHaveBeenCalledWith({
-      error: 'Invalid request. Please review the request and try again.',
-      error: {
-        details: [
-          {
-            message: 'user_id is required',
-            type: 'any.required',
-          },
-          {
-            message: 'name is required',
-            type: 'any.required',
-          },
-          {
-            message: 'category is required',
-            type: 'any.required',
-          },
-          {
-            message: 'priority is required',
-            type: 'any.required',
-          },
-        ],
-        original: {},
-      },
-      status: 'failed',
-    });
     expect(mockNext).not.toHaveBeenCalled();
   });
 

@@ -11,10 +11,6 @@ const validationOptions = {
 const schemaValidator = (path, useJoiError = true) => {
   const schema = schemas[path];
 
-  if (!schema) {
-    throw new Error(`Schema not found for path: ${path}`);
-  }
-
   return (req, res, next) => {
     const method = req.method.toLowerCase();
 
@@ -25,11 +21,6 @@ const schemaValidator = (path, useJoiError = true) => {
     const { error, value } = schema.validate(req.body, validationOptions);
 
     if (error) {
-      const customError = {
-        status: 'failed',
-        error: 'Invalid request. Please review the request and try again.',
-      };
-
       const joiError = {
         status: 'failed',
         error: {
@@ -41,7 +32,7 @@ const schemaValidator = (path, useJoiError = true) => {
         },
       };
 
-      return res.status(422).json(useJoiError ? joiError : customError);
+      return res.status(422).json(useJoiError);
     }
 
     req.body = value;

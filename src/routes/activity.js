@@ -19,24 +19,24 @@ const router = express.Router();
 router.post(
   '/create',
   schemaValidator('/activity/create'),
-  verifyToken,
   verifyAccess,
+  verifyToken,
   checkActivityName,
   async (req, res, next) => {
-    const { user_id, name, category,  isPublished, priority } = req.body;
-      const activity = await createActivity(
-        user_id,
-        name,
-        category,
-        isPublished,
-        priority
-      );
+    const { user_id, name, category, isPublished, priority } = req.body;
+    const activity = await createActivity(
+      user_id,
+      name,
+      category,
+      isPublished,
+      priority
+    );
 
-      return res.status(200).json({
-        data: activity,
-        success: true,
-        message: 'Activity created',
-      });
+    return res.status(200).json({
+      data: activity,
+      success: true,
+      message: 'Activity created',
+    });
   }
 );
 
