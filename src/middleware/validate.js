@@ -32,7 +32,7 @@ const schemaValidator = (path, useJoiError = true) => {
         },
       };
 
-      return res.status(422).json(useJoiError);
+      return res.status(422).json(joiError);
     }
 
     req.body = value;
