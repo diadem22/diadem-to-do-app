@@ -52,6 +52,7 @@ router.post(
         expiresIn: '20m',
       });
       user.token = token;
+      console.log(user)
       res.cookie('token', token, options);
       res.status(200).json({
         status: 'success',
