@@ -6,55 +6,53 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-async function verifyToken (req, res, next) {
-    const authHeader = req.headers['cookie'];
+async function verifyToken(req, res, next) {
+  const authHeader = req.headers['cookie'];
 
-    if (!authHeader) return res.sendStatus(401);
-    const cookie = authHeader.split('=')[1];
+  if (!authHeader) return res.sendStatus(401);
+  const cookie = authHeader.split('=')[1];
 
-    const checkBlacklist = await Blacklist.findOne({ token: cookie });
-    if (checkBlacklist)
-        return res
-            .status(401)
-            .json({ message: 'Session expired. Please re-login' });
+  const checkBlacklist = await Blacklist.findOne({ token: cookie });
+  if (checkBlacklist)
+    return res
+      .status(401)
+      .json({ message: 'Session expired. Please re-login' });
 
-          jwt.verify(cookie, process.env.SECRET_TOKEN, async (err) => {
-            if (err) {
-              return res.sendStatus(403);
-            }
-          });
-        return next();
-};
+  jwt.verify(cookie, process.env.SECRET_TOKEN, async (err) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+  });
+  return next();
+}
 
-async function verifyAccess (req, res, next) {
-    const user_id = req.body['user_id'];
-    const authHeader = req.headers['cookie'];
+async function verifyAccess(req, res, next) {
+  const user_id = req.body['user_id'];
+  const authHeader = req.headers['cookie'];
 
-    console.log(user_id)
-    if (!authHeader) return res.sendStatus(401);
-    const cookie = authHeader.split('=')[1];
+  console.log(user_id);
+  if (!authHeader) return res.sendStatus(401);
+  const cookie = authHeader.split('=')[1];
 
+  const user = await User.findOne({ _id: user_id });
 
-    const user = await User.findOne({ _id: user_id})
-   
-        if (user.token == cookie) {
-          return next();
-        } else
-          return res.status(400).json({
-            message: 'User not authorized',
-          });
-    
-      return next();
+  if (user.token != cookie) {
+    return res.status(400).json({
+      message: 'User not authorized',
+    });
+  }
+return next();
 }
 
 async function verifyUsername(req, res, next) {
-    const name = req.body['username']
+  const name = req.body['username'];
 
-    const exist = await User.findOne({ username: name });
-        if (!exist) return next();
-        else res.status(400).json({
-          message: 'Username exists',
-        });
+  const exist = await User.findOne({ username: name });
+  if (!exist) return next();
+  else
+    res.status(400).json({
+      message: 'Username exists',
+    });
 }
 
 async function checkActivityName(req, res, next) {
@@ -62,8 +60,9 @@ async function checkActivityName(req, res, next) {
   const user_id = req.body['user_id'];
 
   const exist = await Activity.findOne({ name: name, user_id: user_id });
-    if (!exist) return next();
-    else return res.status(400).json({
+  if (!exist) return next();
+  else
+    return res.status(400).json({
       message: 'Activity exists',
     });
 }
@@ -72,5 +71,5 @@ module.exports = {
   verifyToken,
   verifyAccess,
   verifyUsername,
-  checkActivityName
+  checkActivityName,
 };
