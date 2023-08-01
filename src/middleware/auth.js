@@ -70,11 +70,13 @@ async function checkActivityName(req, res, next) {
 
   try {
     if (!exist) return next();
-  } catch (error) {
-    return res.status(400).json({
+    else return res.status(400).json({
       message: 'Activity exists',
     });
+  } catch (error) {
+    console.log(error)
   }
+  return next()
     
 }
 
