@@ -40,13 +40,17 @@ async function verifyAccess(req, res, next) {
 
     console.log(user);
   
+    try {
+      if (!user || user.token != cookie) {
+        return res.status(400).json({
+          message: 'User not authorized',
+        });
+      } else return next();
+    } catch (error) {
+      console.log(error)
+    }
 
-  if (user.token == undefined || user.token != cookie) {
-    return res.status(400).json({
-      message: 'User not authorized',
-    });
-  }
-return next();
+  return next()
 }
 
 async function verifyUsername(req, res, next) {
