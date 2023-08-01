@@ -17,6 +17,7 @@ async function createActivity(
   // console.log('here first')
   try {
     const result = await activity.save();
+    console.log(result)
     return result;
   } catch (ex) {
     for (field in ex.errors) return(ex.errors[field].message);
