@@ -30,11 +30,14 @@ async function verifyAccess(req, res, next) {
   const user_id = req.body['user_id'];
   const authHeader = req.headers['cookie'];
 
-  console.log(user_id);
+  
   if (!authHeader) return res.sendStatus(401);
   const cookie = authHeader.split('=')[1];
+  console.log(cookie);
+  
 
   const user = await User.findOne({ _id: user_id });
+  console.log(user.token);
 
   if (user.token != cookie) {
     return res.status(400).json({
