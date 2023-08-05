@@ -21,16 +21,21 @@ const updateSchema = Joi.object().keys({
   priority: Joi.string().valid('high', 'low'),
 });
 
-const userSchema = Joi.object().keys({
+const userCreateSchema = Joi.object().keys({
   username: Joi.string().required(),
   password: Joi.string().min(6).required().strict()
+});
+
+const userLoginSchema = Joi.object().keys({
+  username: Joi.string().required(),
+  password: Joi.string().required(),
 });
 
 const schemas = {
   '/activity/create': activitySchema,
   '/activity/update': updateSchema,
-  '/user/create': userSchema,
-  '/user/login': userSchema
+  '/user/create': userCreateSchema,
+  '/user/login': userLoginSchema,
 };
 
 module.exports =  schemas 

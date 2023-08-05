@@ -14,10 +14,9 @@ async function createActivity(
     priority: priority,
     category: category
   });
-  // console.log('here first')
+
   try {
     const result = await activity.save();
-    console.log(result)
     return result;
   } catch (ex) {
     for (field in ex.errors) return(ex.errors[field].message);

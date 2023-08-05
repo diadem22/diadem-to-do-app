@@ -35,6 +35,8 @@ jest.mock('../../src/controllers/blacklist', () => ({
   createBlackList: jest.fn(),
 }));
 
+
+
 describe('create user', () => {
   it('POST /create should create a user', async () => {
     const mockUserInput = { username: 'test_user', password: 'test_password' };
@@ -69,6 +71,9 @@ describe('create user', () => {
 describe('login', () => {
 it('POST /login should log in a user and return a JWT token in a cookie', async () => {
   const mockUserInput = { username: 'test_user', password: 'test_password' };
+
+  const mockedUser = { username: 'test_user', password: 'test_password' , token: mockToken};
+  mockingoose(User).toReturn(mockUserInput , 'save');
 
   await loginUser.mockResolvedValue(mockUser);
   jwt.sign = jest.fn(() => mockToken);

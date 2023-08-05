@@ -40,13 +40,20 @@ describe('loginUser', () => {
       };
 
       mockingoose(User).toReturn(mockUser, 'findOne');
+      mockingoose(User).toReturn(mockUser, 'updateOne');
+
+      mockUser.token = 'mocktoken'
 
       const result = await loginUser('testuser', 'longpassword');
+     
+
+      console.log(result)
 
       expect(result).toBeDefined();
       expect(result._id.toString()).toBe(mockUser._id);
       expect(result.username).toBe(mockUser.username);
       expect(result.password).toBe(mockUser.password);
+      expect(result.token).toBe(mockUser.token);
     });
 
     it('should return null if the user is not found', async () => {

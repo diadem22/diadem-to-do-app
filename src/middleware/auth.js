@@ -3,6 +3,8 @@ const { User } = require('../models/user');
 const { Blacklist } = require('../models/blacklist');
 const { Activity } = require('../models/activity');
 const dotenv = require('dotenv');
+const { ObjectId } = require('mongodb');
+const { isValidObjectId } = require('mongoose');
 
 dotenv.config();
 
@@ -26,29 +28,44 @@ async function verifyToken(req, res, next) {
   return next();
 }
 
+async function checkUserId(user_id, res) {
+  if(!isValidObjectId(user_id)) {
+    return res.status(400).json({
+      message: 'Invalid user_id',
+    });
+  }
+}
+
+async function fetchUser(user_id, res) {
+  const user =  await User.findById(user_id)
+
+  if (user == null) {
+    return res.status(400).json({
+      message: 'User does not exist',
+    });
+  } 
+
+  return user
+}
+
 async function verifyAccess(req, res, next) {
   const user_id = req.body['user_id'];
   const authHeader = req.headers['cookie'];
 
-  
   if (!authHeader) return res.sendStatus(401);
   const cookie = authHeader.split('=')[1];
 
-  const user = await User.findById(user_id);
+    await checkUserId(user_id, res, next);
+    const user = await fetchUser(user_id, res)
 
-    console.log(user_id);
-  
-    try {
-      if (!user || user.token != cookie) {
-        return res.status(400).json({
-          message: 'User not authorized',
-        });
-      } else return next();
-    } catch (error) {
-      console.log(error)
-    }
 
-  return next()
+    if (user.token != cookie) {
+      return res.status(401).json({
+        message: 'User not authorized',
+      });
+    } else 
+    return next();
+
 }
 
 async function verifyUsername(req, res, next) {
@@ -68,22 +85,18 @@ async function checkActivityName(req, res, next) {
 
   const exist = await Activity.findOne({ name: name, user_id: user_id });
 
-  console.log(exist)
-
-  try {
     if (!exist) return next();
-    else return res.status(400).json({
-      message: 'Activity exists',
-    });
-  } catch (error) {
-    console.log(error)
-  }
-  return next()
-    
+    else
+      return res.status(400).json({
+        message: 'Activity exists',
+      });
+ 
 }
 
 module.exports = {
   verifyToken,
+  fetchUser,
+  checkUserId,
   verifyAccess,
   verifyUsername,
   checkActivityName,

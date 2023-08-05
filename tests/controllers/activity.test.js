@@ -44,6 +44,7 @@ describe('createActivity', () => {
         2
       );
 
+
       expect(result).toEqual(
         '`caree` is not a valid enum value for path `category`.'
       );
