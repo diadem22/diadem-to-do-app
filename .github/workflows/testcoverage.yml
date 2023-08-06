@@ -29,7 +29,7 @@ jobs:
       - name: Check coverage percentage
         run: |
           COVERAGE_THRESHOLD=80
-          ACTUAL_COVERAGE=$(curl -s "https://codecov.io/api/gh/${{ github.repository }}/commits/${{ github.sha }}/status" | jq -r '.commit.total.branchs')
+          ACTUAL_COVERAGE=$(curl -s https://codecov.io/api/gh/diadem22/diadem-to-do-app/commits/115368ef947ed4486d38864c9cb72934b47cfdac | jq -r '.commit.totals.c')
           if (( $(echo "$ACTUAL_COVERAGE >= $COVERAGE_THRESHOLD" | bc -l) )); then
             echo "Code coverage is within the threshold."
           else
