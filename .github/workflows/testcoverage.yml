@@ -20,7 +20,7 @@ jobs:
         run: npm test -- --coverage --collectCoverageFrom=src/**/*.js
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v3.14
         with:
           file: ./coverage/lcov.info
 
