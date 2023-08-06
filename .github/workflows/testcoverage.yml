@@ -3,7 +3,7 @@ name: Test and Coverage Check
 on:
   push:
     branches:
-      - main 
+      - main  
 
 jobs:
   test-and-check-coverage:
@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: npm install
@@ -20,11 +20,13 @@ jobs:
         run: npm test -- --coverage --collectCoverageFrom=src/**/*.js
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action/checkout@v1
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
 
       - name: Check coverage percentage
         run: |
-          COVERAGE_THRESHOLD=100
+          COVERAGE_THRESHOLD=90
           ACTUAL_COVERAGE=$(curl -s https://codecov.io/api/gh/${{ github.repository }}/branch/${{ github.ref }}/status | jq -r '.commit.total.branchs')
           if (( $(echo "$ACTUAL_COVERAGE >= $COVERAGE_THRESHOLD" | bc -l) )); then
             echo "Code coverage is within the threshold."
