@@ -35,5 +35,5 @@ jobs:
             echo "Code coverage is within the threshold."
           else
             echo "Code coverage is below the threshold. Expected: $COVERAGE_THRESHOLD%, Actual: $ACTUAL_COVERAGE%"
-            Exit with code 1
+            Exit 1
           fi
