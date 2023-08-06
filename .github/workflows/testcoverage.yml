@@ -1,0 +1,32 @@
+name: Test and Coverage Check
+
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  test-and-check-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests and generate coverage
+        run: npm test -- --coverage
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: coverage/lcov-report
+
+      - name: Check coverage percentage
+        uses: featurist/istanbul-coverage@v1
+        with:
+          path: coverage/lcov.info
+          min-coverage: 100
