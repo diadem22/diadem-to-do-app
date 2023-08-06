@@ -17,16 +17,18 @@ jobs:
         run: npm install
 
       - name: Run tests and generate coverage
-        run: npm test -- --coverage
+        run: npm test -- --coverage --collectCoverageFrom=src/**/*.js
 
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v2
-        with:
-          name: coverage-report
-          path: coverage/lcov-report
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action/checkout@v2
 
       - name: Check coverage percentage
-        uses: featurist/istanbul-coverage@v1
-        with:
-          path: coverage/lcov.info
-          min-coverage: 100
+        run: |
+          COVERAGE_THRESHOLD=100
+          ACTUAL_COVERAGE=$(curl -s https://codecov.io/api/gh/${{ github.repository }}/branch/${{ github.ref }}/status | jq -r '.commit.total.branchs')
+          if (( $(echo "$ACTUAL_COVERAGE >= $COVERAGE_THRESHOLD" | bc -l) )); then
+            echo "Code coverage is within the threshold."
+          else
+            echo "Code coverage is below the threshold. Expected: $COVERAGE_THRESHOLD%, Actual: $ACTUAL_COVERAGE%"
+            exit 1
+          fi
