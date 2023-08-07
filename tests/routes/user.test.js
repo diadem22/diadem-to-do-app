@@ -21,7 +21,6 @@ app.use(express.json());
 app.use(router);
 
 const mockUser = { _id: 1, username: 'test_user', password: 'test_password' };
-console.log(process.env.SECRET_TOKEN);
 const mockToken = jwt.sign({ id: mockUser._id }, process.env.SECRET_TOKEN, {
   expiresIn: '20m',
 });

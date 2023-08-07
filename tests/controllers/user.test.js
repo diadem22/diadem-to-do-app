@@ -47,8 +47,6 @@ describe('loginUser', () => {
       const result = await loginUser('testuser', 'longpassword');
      
 
-      console.log(result)
-
       expect(result).toBeDefined();
       expect(result._id.toString()).toBe(mockUser._id);
       expect(result.username).toBe(mockUser.username);
