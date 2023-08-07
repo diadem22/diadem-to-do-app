@@ -2,10 +2,8 @@ name: Create envfile
 
 on: [ push ]
 
-id: workflow_b
-
 jobs:
-
+  job_b:
   create-envfile:
  
     runs-on: ubuntu-latest
