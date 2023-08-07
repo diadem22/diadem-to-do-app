@@ -21,7 +21,10 @@ app.use(express.json());
 app.use(router);
 
 const mockUser = { _id: 1, username: 'test_user', password: 'test_password' };
-const mockToken = 'gffhgsdgfsfhfgngvh'
+console.log(process.env.SECRET_TOKEN);
+const mockToken = jwt.sign({ id: mockUser._id }, process.env.SECRET_TOKEN, {
+  expiresIn: '20m',
+});
 
 jest.mock('../../src/controllers/user', () => ({
   createUser: jest.fn(),
