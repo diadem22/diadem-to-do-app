@@ -9,10 +9,9 @@ jobs:
     runs-on: ubuntu-latest
  
     steps:
-    - name: Make envfile
-      uses: SpicyPizza/create-envfile@v2.0
-      with:
-        envkey_NODE_ENV: development
-        envkey_PORT: 6000
-        envkey_MONGO_DB_URI: ${{ secrets.MONGO_DB_URI }}
-        envkey_SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}
+    - name: 'Create env file'
+      run: |
+          touch .env
+          echo MONGO_DB_URI: ${{ secrets.MONGO_DB_URI }} >> .env
+          echo SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }} >> .env
+          cat .env
