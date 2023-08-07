@@ -3,8 +3,8 @@ name:  Node js Todo
 on:  [push]
 
 jobs:
-  job_a:
   build:
+
     runs-on: ubuntu-latest
 
     strategy:

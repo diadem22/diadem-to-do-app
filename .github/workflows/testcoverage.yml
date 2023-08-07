@@ -6,10 +6,8 @@ on:
       - main  
 
 jobs:
-  job_c:
   test-and-check-coverage:
     runs-on: ubuntu-latest
-    needs: job_b
 
     steps:
       - name: Checkout code

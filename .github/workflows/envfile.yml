@@ -3,7 +3,7 @@ name: Create envfile
 on: [ push ]
 
 jobs:
-  job_b:
+
   create-envfile:
  
     runs-on: ubuntu-latest
