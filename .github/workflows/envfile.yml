@@ -2,6 +2,8 @@ name: Create envfile
 
 on: [ push ]
 
+id: workflow_b
+
 jobs:
 
   create-envfile:
