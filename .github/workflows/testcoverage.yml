@@ -22,6 +22,10 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3.1.4
         env:
+          NODE_ENV: development
+          PORT: 6000
+          MONGO_DB_URI: ${{ secrets.MONGO_DB_URI }}
+          SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           file: ./coverage/lcov.info
