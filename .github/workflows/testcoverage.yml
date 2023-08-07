@@ -3,7 +3,10 @@ name: Test and Coverage Check
 on:
   push:
     branches:
-      - main  
+      - main
+  pull_request:
+    branches:
+      - main 
 
 jobs:
   test-and-check-coverage:
