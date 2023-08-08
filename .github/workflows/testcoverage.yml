@@ -49,6 +49,14 @@ jobs:
           if (( $(echo "$ACTUAL_COVERAGE >= $COVERAGE_THRESHOLD" | bc -l) )); then
             echo "Code coverage is within the threshold."
           else
+
+      - name: Debug Pull Request SHA
+        run: echo "Pull Request SHA ${{ github.event.pull_request.head.sha }}"
+
+      - name: List Contents of Coverage Directory
+        run: ls -l ./coverage
+
+
             echo "Code coverage is below the threshold. Expected: $COVERAGE_THRESHOLD%, Actual: $ACTUAL_COVERAGE%"
           exit 1
           fi
