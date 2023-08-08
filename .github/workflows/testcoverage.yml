@@ -42,11 +42,12 @@ jobs:
 
       - name: Check coverage percentage
         run: |
+          sleep 60
           COVERAGE_PERCENTAGE=$(cat ./coverage/lcov-report/index.html | grep -o -P '(?<=data-cov="line">)[0-9]+(?=%</span>)')
 
           if [ "$COVERAGE_PERCENTAGE" -ge 80 ]; then
             echo "Coverage is greater than or equal to 80%."
           else
             echo "Coverage is less than 80%."
-            exit 1  # Fail the workflow if coverage is less than 80%
+            exit 1  
           fi
