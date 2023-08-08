@@ -40,4 +40,19 @@ jobs:
         with:
           file: ./coverage/lcov.info
 
+      - name: Check coverage percentage
+        run: |
+          COVERAGE_THRESHOLD=70
+          sleep 60
+          ACTUAL_COVERAGE=$(curl -s "https://codecov.io/api/gh/${{ github.repository }}/commits/${{ github.event.pull_request.head.sha }}" | jq -r '.commit.totals.c')
+          echo 'github.event.pull_request.head.sha'
+          echo $ACTUAL_COVERAGE
+          if (( $(echo "$ACTUAL_COVERAGE >= $COVERAGE_THRESHOLD" | bc -l) )); then
+            echo "Code coverage is within the threshold."
+          else
+            echo "Code coverage is below the threshold. Expected: $COVERAGE_THRESHOLD%, Actual: $ACTUAL_COVERAGE%"
+          exit 1
+          fi
+
+
 
