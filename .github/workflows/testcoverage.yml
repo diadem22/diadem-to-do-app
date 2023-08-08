@@ -29,26 +29,14 @@ jobs:
       - name: Run tests and generate coverage
         run: npm test -- --coverage --collectCoverageFrom=src/**/*.js
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.4
-        env:
-          NODE_ENV: development
-          PORT: 6000
-          MONGO_DB_URI: ${{ secrets.MONGO_DB_URI }}
-          SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        with:
-          file: ./coverage/lcov.info
-
       - name: Check coverage percentage
         run: |
-          COVERAGE_THRESHOLD=70
           sleep 60
-          ACTUAL_COVERAGE=$(curl -s "https://codecov.io/api/gh/${{ github.repository }}/commits/${{ github.sha }}" | jq -r '.commit.totals.c')
-          echo $ACTUAL_COVERAGE
-          if (( $(echo "$ACTUAL_COVERAGE >= $COVERAGE_THRESHOLD" | bc -l) )); then
-            echo "Code coverage is within the threshold."
+          COVERAGE_PERCENTAGE=$(cat ./coverage/lcov-report/index.html | grep -o -P '(?<=data-cov="line">)[0-9]+(?=%</span>)')
+          echo "$COVERAGE_PERCENTAGE"
+          if [ "$COVERAGE_PERCENTAGE" -ge 80 ]; then
+            echo "Coverage is greater than or equal to 80%."
           else
-            echo "Code coverage is below the threshold. Expected: $COVERAGE_THRESHOLD%, Actual: $ACTUAL_COVERAGE%"
-          exit 1
+            echo "Coverage is less than 80%."
+            exit 1  
           fi
