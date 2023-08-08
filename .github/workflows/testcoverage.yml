@@ -40,8 +40,4 @@ jobs:
         with:
           file: ./coverage/lcov.info
 
-      - name: Check coverage percentage
-        run: |
-          COVERAGE_PERCENTAGE=$(cat ./coverage/lcov-report/index.html | grep -o -P '(?<=data-cov="line">)[0-9]+(?=%</span>)')
-          echo "$COVERAGE_PERCENTAGE"
 
