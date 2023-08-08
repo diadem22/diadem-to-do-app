@@ -29,22 +29,11 @@ jobs:
       - name: Run tests and generate coverage
         run: npm test -- --coverage --collectCoverageFrom=src/**/*.js
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.4
-        env:
-          NODE_ENV: development
-          PORT: 6000
-          MONGO_DB_URI: ${{ secrets.MONGO_DB_URI }}
-          SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        with:
-          file: ./coverage/lcov.info
-
       - name: Check coverage percentage
         run: |
           sleep 60
           COVERAGE_PERCENTAGE=$(cat ./coverage/lcov-report/index.html | grep -o -P '(?<=data-cov="line">)[0-9]+(?=%</span>)')
-          echo $COVERAGE_PERCENTAGE
+          echo "$COVERAGE_PERCENTAGE"
           if [ "$COVERAGE_PERCENTAGE" -ge 80 ]; then
             echo "Coverage is greater than or equal to 80%."
           else
