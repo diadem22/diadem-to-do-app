@@ -47,7 +47,7 @@ jobs:
         run: |
           COVERAGE_THRESHOLD=70
           sleep 60
-          ACTUAL_COVERAGE=$(curl -s "https://codecov.io/api/gh/${{ github.repository }}/commits/${{ github.event.pull_request.head.sha }}" | jq -r '.commit.totals.c')
+          ACTUAL_COVERAGE=$(curl -s "https://codecov.io/api/gh/${{ github.repository }}/commits/${{ github.sha }}" | jq -r '.commit.totals.c')
           echo $ACTUAL_COVERAGE
           echo "Pull Request SHA ${{ github.event.pull_request.head.sha }}"
           if (( $(echo "$ACTUAL_COVERAGE >= $COVERAGE_THRESHOLD" | bc -l) )); then
