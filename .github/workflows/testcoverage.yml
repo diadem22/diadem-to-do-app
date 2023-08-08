@@ -40,14 +40,17 @@ jobs:
         with:
           file: ./coverage/lcov.info
 
-      - name: Determine Commit SHA
-        run: echo "COMMIT_SHA=${{ github.event.pull_request.head.sha || github.sha }}" >> $GITHUB_ENV
+      - name: Determine_Commit_SHA
+        id: commit_sha
+        run: echo "COMMIT_SHA=${{ github.event.pull_request.head.sha || github.sha }}" >> $GITHUB_OUTPUT
+        env:
+            COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Check coverage percentage
         run: |
           COVERAGE_THRESHOLD=70
           sleep 60
-          ACTUAL_COVERAGE=$(curl -s "https://codecov.io/api/gh/${{ github.repository }}/commits/${COMMIT_SHA}" | jq -r '.commit.totals.c')
+          ACTUAL_COVERAGE=$(curl -s "https://codecov.io/api/gh/${{ github.repository }}/commits/${steps.commit_sha.outputs.COMMIT_SHA}" | jq -r '.commit.totals.c')
           echo $ACTUAL_COVERAGE
           if (( $(echo "$ACTUAL_COVERAGE >= $COVERAGE_THRESHOLD" | bc -l) )); then
             echo "Code coverage is within the threshold."
