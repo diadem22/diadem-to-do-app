@@ -120,7 +120,6 @@ describe('Authentication Middleware', () => {
          mockingoose(User).toReturn(mockUser, 'findOne');
 
          const user = await fetchUser(mockUserId, mockRes)
-         console.log(user)
 
          await verifyAccess(mockReq, mockRes, mockNext);
         
