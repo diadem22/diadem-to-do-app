@@ -1,0 +1,26 @@
+language: node_js
+node_js:
+  - 14
+
+services:
+  - docker
+
+env:
+  global:
+    - MONGODB_URI=$MONGO_DB_URI
+
+before_install:
+  - docker run -d -p 27017:27017 --name mongodb mongo:latest
+
+before_script:
+  - sleep 15
+
+script:
+  - npm install
+  - npm test
+
+after_success:
+  - docker build -t diadem27/to-do-app .
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker push diadem27/to-do-app
+
