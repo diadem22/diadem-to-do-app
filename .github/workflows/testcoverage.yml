@@ -27,12 +27,12 @@ jobs:
       - name: Install dependencies
         working-directory: ./app
         run: npm install
-
       - name: Run tests and generate coverage
         working-directory: ./app
         run: npm test --collectCoverageFrom=src/**/*.js
 
       - name: Upload coverage to Codecov
+
         uses: codecov/codecov-action@v3.1.4
         env:
           NODE_ENV: development
@@ -41,7 +41,7 @@ jobs:
           SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
-          file: ./coverage/lcov.info
+          file: ./app/coverage/lcov.info
 
       - name: Determine_Commit_SHA
         id: commit_sha
