@@ -23,6 +23,7 @@ script:
   - npm install
 
 after_success:
+  - cd ../
   - docker build -t diadem27/to-do-app .
   - docker push diadem27/to-do-app
 
