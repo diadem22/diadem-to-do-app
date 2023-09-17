@@ -24,9 +24,11 @@ jobs:
           cat .env
 
       - name: Install dependencies
+        working-directory: ./app
         run: npm install
 
       - name: Run tests and generate coverage
+        working-directory: ./app
         run: npm test -- --coverage --collectCoverageFrom=src/**/*.js
 
       - name: Upload coverage to Codecov
