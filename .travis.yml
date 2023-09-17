@@ -10,6 +10,7 @@ env:
     - MONGODB_URI=$MONGO_DB_URI
 
 before_install:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker run -d -p 27017:27017 --name mongodb mongo:latest
 
 before_script:
@@ -21,7 +22,6 @@ script:
 
 after_success:
   - docker build -t diadem27/to-do-app .
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker push diadem27/to-do-app
 
 deploy:
