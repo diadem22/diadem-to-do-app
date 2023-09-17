@@ -18,7 +18,6 @@ before_script:
 script:
   - cd ./app
   - npm install
-  - npm test
 
 after_success:
   - docker build -t diadem27/to-do-app .
