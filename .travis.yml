@@ -26,5 +26,7 @@ after_success:
   - docker push diadem27/to-do-app
 
 deploy:
+  provider: script 
+  script: bash ./deploy.sh
   on:
     branch: main
