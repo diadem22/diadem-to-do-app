@@ -1,0 +1,4 @@
+runtime: nodejs16
+
+vpc_access_connector:
+  name: projects/multi-k8s-398721/locations/europe-west1/connectors/diadem-to-do

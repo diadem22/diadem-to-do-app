@@ -20,7 +20,7 @@ app.use('/user', userRoute)
 app.use('/activity', activityRoute)
 
   app.get('/', (req, res) => {
-    res.send('to-do-app.com');
+    res.send('ife-and-daniel.com');
   });
 
 
