@@ -20,7 +20,7 @@ app.use('/user', userRoute)
 app.use('/activity', activityRoute)
 
   app.get('/', (req, res) => {
-    res.send('ife-and-daniel.com');
+    res.send('diadem-amd-gbensky.com');
   });
 
 
