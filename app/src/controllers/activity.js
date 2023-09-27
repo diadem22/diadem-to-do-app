@@ -1,45 +1,53 @@
-const { Activity } = require('../models/activity')
+const moment = require('moment');
+const { Activity } = require('../models/activity');
 
 async function createActivity(
   user_id,
   name,
   category,
   isPublished,
-  priority
+  priority,
+  time
 ) {
   const activity = new Activity({
     user_id: user_id,
     name: name,
     isPublished: isPublished,
     priority: priority,
-    category: category
+    category: category,
+    time: time,
   });
 
   try {
     const result = await activity.save();
     return result;
   } catch (ex) {
-    for (field in ex.errors) return(ex.errors[field].message);
+    for (field in ex.errors) return ex.errors[field].message;
   }
 }
 
-async function updateActivity(user_id,  name, category, priority) {
+async function updateActivity(
+  user_id,
+  activity_id,
+  category,
+  priority,
+  status
+) {
   const result = await Activity.findOneAndUpdate(
     {
-      name: name,
       user_id: user_id,
-      
+      _id: activity_id,
     },
     {
       $set: {
-        user_id: user_id,
         isPublished: true,
         category: category,
         priority: priority,
-      },  
+        status: status,
+      },
     },
     {
-      returnNewDocument : true 
+      new: true,
     }
   );
 
@@ -48,14 +56,36 @@ async function updateActivity(user_id,  name, category, priority) {
 
 async function fetchById(id) {
   const result = await Activity.find({
-    user_id: id
+    user_id: id,
   });
 
   return result;
+}
+
+async function listActivitiesForDay(user_id) {
+  try {
+    const now = moment();
+    const startOfDay = now.clone().startOf('day'); 
+    const endOfDay = now.clone().endOf('day'); 
+
+    const activities = await Activity.find({
+      user_id: user_id,
+      date: {
+        $gte: startOfDay.toDate(), 
+        $lte: endOfDay.toDate(), 
+      },
+    }).select('name status date time'); 
+    
+    return activities;
+  } catch (ex) {
+    console.error(ex);
+    throw ex;
+  }
 }
 
 module.exports = {
   createActivity,
   updateActivity,
   fetchById,
+  listActivitiesForDay,
 };

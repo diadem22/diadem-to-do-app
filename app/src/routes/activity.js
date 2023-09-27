@@ -5,6 +5,7 @@ const {
   createActivity,
   updateActivity,
   fetchById,
+  listActivitiesForDay,
 } = require('../controllers/activity');
 
 const {
@@ -21,15 +22,15 @@ router.post(
   schemaValidator('/activity/create'),
   verifyAccess,
   verifyToken,
-  checkActivityName,
   async (req, res, next) => {
-    const { user_id, name, category, isPublished, priority } = req.body;
+    const { user_id, name, category, isPublished, priority, time } = req.body;
     const activity = await createActivity(
       user_id,
       name,
       category,
       isPublished,
-      priority
+      priority,
+      time
     );
     return res.status(200).json({
       data: activity,
@@ -45,9 +46,15 @@ router.put(
   verifyToken,
   verifyAccess,
   async (req, res, next) => {
-    const { user_id, name, priority, category } = req.body;
+    const { user_id, activity_id, priority, category, status } = req.body;
 
-      const activity = await updateActivity(user_id, name, category, priority);
+      const activity = await updateActivity(
+        user_id,
+        activity_id,
+        priority,
+        category,
+        status
+      );
       return res
         .status(200)
         .json({ data: activity, success: true, message: 'Activity updated' });
@@ -66,6 +73,17 @@ async (req, res, next) => {
       success: true,
       message: 'Activity retrieved',
     });
+});
+
+router.get('/fetch-daily-tasks', verifyToken, verifyAccess, async (req, res, next) => {
+  const { user_id } = req.body;
+
+  const activity = await listActivitiesForDay(user_id);
+  return res.status(200).json({
+    data: activity,
+    success: true,
+    message: 'Activities retrieved',
+  });
 });
 
 module.exports = router;
