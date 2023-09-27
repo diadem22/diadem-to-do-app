@@ -102,7 +102,7 @@ describe('Activity Routes', () => {
     };
 
     const response = await request(server)
-      .put('/activity/update')
+      .put('/activity/update/:user_id')
       .send(mockActivityRequest);
 
     expect(response.statusCode).toBe(200);
