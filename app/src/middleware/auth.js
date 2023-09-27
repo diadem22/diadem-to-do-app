@@ -49,7 +49,7 @@ async function fetchUser(user_id, res) {
 }
 
 async function verifyAccess(req, res, next) {
-  const user_id = req.body['user_id'];
+  const { user_id } = req.params;
   const authHeader = req.headers['cookie'];
 
   if (!authHeader) return res.sendStatus(401);

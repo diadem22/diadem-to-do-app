@@ -61,11 +61,12 @@ router.put(
   }
 );
 
-router.get('/fetch', 
-verifyToken, 
-verifyAccess, 
-async (req, res, next) => {
-  const { user_id } = req.body;
+router.get(
+  '/fetch/:user_id',
+  verifyToken,
+  verifyAccess,
+  async (req, res, next) => {
+    const { user_id } = req.params;
 
     const activity = await fetchById(user_id);
     return res.status(200).json({
@@ -73,10 +74,11 @@ async (req, res, next) => {
       success: true,
       message: 'Activity retrieved',
     });
-});
+  }
+);
 
-router.get('/fetch-daily-tasks', verifyToken, verifyAccess, async (req, res, next) => {
-  const { user_id } = req.body;
+router.get('/fetch-daily-tasks/:user_id', verifyToken, verifyAccess, async (req, res, next) => {
+  const { user_id } = req.params;
 
   const activity = await listActivitiesForDay(user_id);
   return res.status(200).json({
