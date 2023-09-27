@@ -41,12 +41,13 @@ router.post(
 );
 
 router.put(
-  '/update',
+  '/update/:user_id',
   schemaValidator('/activity/update'),
   verifyToken,
   verifyAccess,
   async (req, res, next) => {
-    const { user_id, activity_id, priority, category, status } = req.body;
+    const { user_id } = req.params;
+    const { activity_id, priority, category, status } = req.body;
 
       const activity = await updateActivity(
         user_id,
