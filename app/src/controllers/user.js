@@ -21,9 +21,14 @@ async function loginUser(
   username,
   password
 ) {
-  const result = await User.findOne({ username, password})
+   try {
+     const result = await User.findOne({ username, password });
 
-  return result;
+     return result;
+   } catch (error) {
+     console.error('Login failed:', error.message);
+     throw error; 
+   }
 }
 
 
