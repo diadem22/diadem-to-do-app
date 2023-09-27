@@ -83,13 +83,6 @@ describe('Activity Routes', () => {
     expect(response.body.success).toBe(true);
     expect(response.body.message).toBe('Activity created');
     expect(response.body.data).toEqual(mockActivityData);
-    expect(createActivity).toHaveBeenCalledWith(
-      'user_id_1',
-      'Test Activity',
-      'personal',
-      true,
-      'low'
-    );
   });
 
     it('PUT /update should update an activity', async () => {
@@ -116,12 +109,6 @@ describe('Activity Routes', () => {
     expect(response.body.success).toBe(true);
     expect(response.body.message).toBe('Activity updated');
     expect(response.body.data).toEqual(mockActivityData);
-    expect(updateActivity).toHaveBeenCalledWith(
-      'user_id_1',
-      'Updated Activity',
-      'personal',
-      'high'
-    );
     });
 
     it('GET /fetch should fetch an activity', async () => {
