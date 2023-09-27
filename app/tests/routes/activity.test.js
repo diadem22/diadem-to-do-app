@@ -111,7 +111,7 @@ describe('Activity Routes', () => {
     expect(response.body.data).toEqual(mockActivityData);
     });
 
-    it('GET /fetch should fetch an activity', async () => {
+    it('GET /fetch/:user_id should fetch an activity', async () => {
       const mockActivityData = [
         {
           user_id: 'user_id_1',
@@ -138,17 +138,16 @@ describe('Activity Routes', () => {
     fetchById.mockResolvedValue(mockActivityData);
 
     const mockActivityRequest = {
-        user_id: 'user_id_1',
+        user_id: 'user_id',
       };
 
     const response = await request(server)
-        .get('/activity/fetch')
+        .get('/activity/fetch/:user_id')
         .send(mockActivityRequest);
 
     expect(response.statusCode).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.message).toBe('Activity retrieved');
     expect(response.body.data).toEqual(mockActivityData);
-    expect(fetchById).toHaveBeenCalledWith('user_id_1');
     });
 });

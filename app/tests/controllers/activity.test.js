@@ -1,5 +1,11 @@
+const moment = require('moment');
 const mockingoose = require('mockingoose');
-const { createActivity, updateActivity, fetchById } = require('../../src/controllers/activity'); 
+const {
+  createActivity,
+  updateActivity,
+  fetchById,
+  listActivitiesForDay,
+} = require('../../src/controllers/activity');
 
 const { Activity } = require('../../src/models/activity');
 
@@ -11,10 +17,11 @@ describe('createActivity', () => {
       category: 'personal',
       isPublished: true,
       priority: 'low',
+      status: 'not-done',
+      test: '11:20',
     };
 
     mockingoose(Activity).toReturn(mockActivityData, 'save');
-
 
     const result = await createActivity(
       mockActivityData.user_id,
@@ -23,7 +30,6 @@ describe('createActivity', () => {
       mockActivityData.isPublished,
       mockActivityData.priority
     );
-
 
     expect(result).toBeDefined();
     expect(result.user_id).toBe(mockActivityData.user_id);
@@ -36,29 +42,30 @@ describe('createActivity', () => {
   it('should handle errors during activity creation', async () => {
     mockingoose(Activity).toReturn(new Error('Mocked error'), 'save');
 
-      const result = await createActivity(
-        'user_id_2',
-        'Test Activity 2',
-        'caree',
-        true,
-        2
-      );
+    const result = await createActivity(
+      'user_id_2',
+      'Test Activity 2',
+      'caree',
+      true,
+      2
+    );
 
-
-      expect(result).toEqual(
-        '`caree` is not a valid enum value for path `category`.'
-      );
+    expect(result).toEqual(
+      '`caree` is not a valid enum value for path `category`.'
+    );
   }, 30000);
 }, 30000);
 
-describe('updateActivity',  () => {
+describe('updateActivity', () => {
   it('should update and return activity', async () => {
     const mockActivityData = {
       user_id: 'user_id_1',
       name: 'Test Activity',
       category: 'personal',
       priority: 'low',
-      isPublished: false
+      isPublished: false,
+      status: 'not-done',
+      test: '11:20',
     };
 
     const updaedActivityData = {
@@ -66,29 +73,29 @@ describe('updateActivity',  () => {
       name: 'Test Activity',
       category: 'career',
       priority: 'high',
-      isPublished: true
+      isPublished: true,
+      status: 'in-progress',
+      test: '11:20',
     };
 
-      mockingoose(Activity).toReturn(updaedActivityData, 'findOneAndUpdate');
+    mockingoose(Activity).toReturn(updaedActivityData, 'findOneAndUpdate');
 
     const result = await updateActivity(
       mockActivityData.user_id,
       mockActivityData.name,
       mockActivityData.category,
-      mockActivityData.priority,
+      mockActivityData.priority
     );
-
 
     expect(result.category).toBe(updaedActivityData.category);
     expect(result.priority).toBe(updaedActivityData.priority);
-    
-  })
-})
+  });
+});
 
 describe('fetchById', () => {
   it('should fetch all activities for the user', async () => {
     const mockActivityData = {
-      user_id: 'user_id_1'
+      user_id: 'user_id_1',
     };
 
     const fetchedActivityData = [
@@ -117,14 +124,12 @@ describe('fetchById', () => {
 
     mockingoose(Activity).toReturn(fetchedActivityData, 'find');
 
-    const result = await fetchById(
-      mockActivityData.user_id
-    );
+    const result = await fetchById(mockActivityData.user_id);
 
     expect(result[0].category).toBe(fetchedActivityData[0].category);
     expect(result[0].priority).toBe(fetchedActivityData[0].priority);
-  })
-})
+  });
+});
 
 
 // const { createActivity, updateActivity, fetchById } = require('./activity');
@@ -296,6 +301,5 @@ describe('fetchById', () => {
 //     expect(result).toEqual(expectedResult);
 //   }, 15000);
 // });
-
 
 // chgdgrseag

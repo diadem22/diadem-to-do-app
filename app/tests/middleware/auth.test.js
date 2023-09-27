@@ -17,6 +17,7 @@ function createMockReq() {
   return {
     headers: {},
     body: {},
+    params: {}
   };
 }
 
@@ -134,6 +135,7 @@ describe('Authentication Middleware', () => {
          const mockInvalidToken = 'invalid_token';
          mockReq = createMockReq(mockUserId, mockInvalidToken);
          mockReq.headers.cookie = `token=${mockToken}`;
+         mockReq.params.user_id = mockUserId
 
          const mockUser = { _id: mockUserId, token: mockInvalidToken };
          mockingoose(User).toReturn(mockUser, 'findOne');
