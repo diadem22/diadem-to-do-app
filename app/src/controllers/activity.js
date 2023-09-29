@@ -12,6 +12,7 @@ async function createActivity(
   try {
 
     const existingActivity = await Activity.findOne({
+      user_id: user_id,
       name: name,
       time: time,
       date: moment().startOf('day').format(),
