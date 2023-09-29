@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 const activitySchema = new mongoose.Schema({
   user_id: {
@@ -14,7 +15,11 @@ const activitySchema = new mongoose.Schema({
     required: true,
     enum: ['spiritual', 'career', 'exercise', 'personal'],
   },
-  date: { type: Date, default: Date.now },
+  date: {
+    type: Date,
+    required: true,
+    default: moment().startOf('day').format()
+  },
   isPublished: { type: Boolean },
   priority: {
     type: String,
@@ -27,7 +32,8 @@ const activitySchema = new mongoose.Schema({
     default: 'not-done',
   },
   time: {
-    type: String, 
+    type: String,
+    required: true,
   },
 });
   

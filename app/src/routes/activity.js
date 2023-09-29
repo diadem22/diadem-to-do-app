@@ -18,12 +18,13 @@ const { schemaValidator } = require('../middleware/validate');
 const router = express.Router();
 
 router.post(
-  '/create',
+  '/create/:user_id',
   schemaValidator('/activity/create'),
   verifyAccess,
   verifyToken,
   async (req, res, next) => {
-    const { user_id, name, category, isPublished, priority, time } = req.body;
+    const { user_id } = req.params;
+    const { name, category, isPublished, priority, time } = req.body;
     const activity = await createActivity(
       user_id,
       name,
@@ -32,6 +33,13 @@ router.post(
       priority,
       time
     );
+    
+    if(!activity) {
+      res.status(400).json({
+        message: 'Could not creat activity, name already exists or activity set at that time',
+      });
+    }
+
     return res.status(200).json({
       data: activity,
       success: true,

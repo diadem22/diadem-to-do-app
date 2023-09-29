@@ -1,7 +1,6 @@
 const Joi = require('joi');
 
 const activitySchema = Joi.object().keys({
-  user_id: Joi.string().required(),
   name: Joi.string().required(),
   category: Joi.string()
     .required()
