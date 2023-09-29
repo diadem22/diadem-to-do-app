@@ -32,7 +32,7 @@ async function createActivity(
       return result;
     }    
   } catch (ex) {
-    console.error('Error while creating activity:', ex);
+    console.error('Error while creating activity', ex);
   }
 }
 

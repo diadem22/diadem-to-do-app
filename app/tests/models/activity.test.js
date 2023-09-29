@@ -10,6 +10,7 @@ describe('Activity Model', () => {
         category: 'personal',
         isPublished: true,
         priority: 'low',
+        time: '11:30'
       };
 
     mockingoose(Activity).toReturn(mockActivityData, 'save')

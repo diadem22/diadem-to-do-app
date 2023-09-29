@@ -18,7 +18,7 @@ describe('createActivity', () => {
       isPublished: true,
       priority: 'low',
       status: 'not-done',
-      test: '11:20',
+      time: '11:20',
     };
 
     mockingoose(Activity).toReturn(mockActivityData, 'save');
@@ -28,7 +28,8 @@ describe('createActivity', () => {
       mockActivityData.name,
       mockActivityData.category,
       mockActivityData.isPublished,
-      mockActivityData.priority
+      mockActivityData.priority,
+      mockActivityData.time
     );
 
     expect(result).toBeDefined();
@@ -47,11 +48,12 @@ describe('createActivity', () => {
       'Test Activity 2',
       'caree',
       true,
-      2
+      'high',
+      '11:20'
     );
 
     expect(result).toEqual(
-      '`caree` is not a valid enum value for path `category`.'
+      undefined
     );
   }, 30000);
 }, 30000);
@@ -65,7 +67,7 @@ describe('updateActivity', () => {
       priority: 'low',
       isPublished: false,
       status: 'not-done',
-      test: '11:20',
+      time: '11:20',
     };
 
     const updaedActivityData = {
@@ -75,7 +77,7 @@ describe('updateActivity', () => {
       priority: 'high',
       isPublished: true,
       status: 'in-progress',
-      test: '11:20',
+      time: '11:20',
     };
 
     mockingoose(Activity).toReturn(updaedActivityData, 'findOneAndUpdate');

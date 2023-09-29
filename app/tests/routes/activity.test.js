@@ -64,6 +64,7 @@ describe('Activity Routes', () => {
               category: 'personal',
               isPublished: true,
               priority: 'low',
+              time: '12:00'
     };
     createActivity.mockResolvedValue(mockActivityData);
 
@@ -73,10 +74,11 @@ describe('Activity Routes', () => {
       category: 'personal',
       isPublished: true,
       priority: 'low',
+      time: '12:00',
     };
 
     const response = await request(server)
-      .post('/activity/create')
+      .post('/activity/create/:user_id')
       .send(mockActivityRequest);
 
     expect(response.statusCode).toBe(200);
