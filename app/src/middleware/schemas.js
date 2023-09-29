@@ -8,7 +8,10 @@ const activitySchema = Joi.object().keys({
   date: Joi.date(),
   isPublished: Joi.boolean(),
   priority: Joi.string().required().valid('high', 'low'),
-  time: Joi.string().required()
+  time: Joi.string()
+    .required()
+    .pattern(new RegExp(/^(?:[01]\d|2[0-3]):[0-5]\d$/))
+    .message('Time must be in HH:mm format (e.g., "09:00").'),
 });
 
 const updateSchema = Joi.object().keys({
