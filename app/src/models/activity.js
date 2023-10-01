@@ -18,7 +18,7 @@ const activitySchema = new mongoose.Schema({
   date: {
     type: Date,
     required: true,
-    default: moment().startOf('day').format()
+    default: moment().startOf('day').format(),
   },
   isPublished: { type: Boolean },
   priority: {
@@ -34,6 +34,15 @@ const activitySchema = new mongoose.Schema({
   time: {
     type: String,
     required: true,
+    validate: {
+      validator: function (value) {
+        const currentTime = moment();
+        const providedTime = moment(value, 'HH:mm', true); 
+        return (
+          providedTime.isValid() && providedTime.isSameOrAfter(currentTime)
+        );
+      }
+    },
   },
 });
   

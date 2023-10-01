@@ -14,6 +14,7 @@ const {
   checkActivityName,
 } = require('../middleware/auth');
 const { schemaValidator } = require('../middleware/validate');
+const { error } = require('console');
 
 const router = express.Router();
 
@@ -36,7 +37,7 @@ router.post(
     
     if(!activity) {
       res.status(400).json({
-        message: 'Could not creat activity, name already exists or activity set at that time',
+        message: 'Error creating activity, please check name and time again'
       });
     }
 
