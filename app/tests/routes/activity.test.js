@@ -1,4 +1,4 @@
-
+const moment = require('moment');
 const http = require('http');
 const request = require('supertest');
 const express = require('express');
@@ -45,6 +45,8 @@ function createMockServer(handler) {
   });
 }
 
+const fifteenMinutesFromNow = moment().add(15, 'minutes');
+
 describe('Activity Routes', () => {
   let server;
 
@@ -59,12 +61,12 @@ describe('Activity Routes', () => {
 
   it('POST /activity/create should create an activity', async () => {
     const mockActivityData = {
-            user_id: 'user_id_1',
-              name: 'Test Activity',
-              category: 'personal',
-              isPublished: true,
-              priority: 'low',
-              time: '12:00'
+      user_id: 'user_id_1',
+      name: 'Test Activity',
+      category: 'personal',
+      isPublished: true,
+      priority: 'low',
+      time: fifteenMinutesFromNow.format('HH:mm'),
     };
     createActivity.mockResolvedValue(mockActivityData);
 
@@ -74,7 +76,7 @@ describe('Activity Routes', () => {
       category: 'personal',
       isPublished: true,
       priority: 'low',
-      time: '12:00',
+      time: fifteenMinutesFromNow.format('HH:mm'),
     };
 
     const response = await request(server)
@@ -87,7 +89,7 @@ describe('Activity Routes', () => {
     expect(response.body.data).toEqual(mockActivityData);
   });
 
-    it('PUT /update should update an activity', async () => {
+  it('PUT /update should update an activity', async () => {
     const mockActivityData = {
       user_id: 'user_id_1',
       name: 'Test Activity',
@@ -111,45 +113,45 @@ describe('Activity Routes', () => {
     expect(response.body.success).toBe(true);
     expect(response.body.message).toBe('Activity updated');
     expect(response.body.data).toEqual(mockActivityData);
-    });
+  });
 
-    it('GET /fetch/:user_id should fetch an activity', async () => {
-      const mockActivityData = [
-        {
-          user_id: 'user_id_1',
-          name: 'Test Activity 1',
-          category: 'career',
-          priority: 'high',
-          isPublished: true,
-        },
-        {
-          user_id: 'user_id_1',
-          name: 'Test Activity 3',
-          category: 'career',
-          priority: 'high',
-          isPublished: true,
-        },
-        {
-          user_id: 'user_id_1',
-          name: 'Test Activity 2',
-          category: 'career',
-          priority: 'high',
-          isPublished: true,
-        },
-      ];
+  it('GET /fetch/:user_id should fetch an activity', async () => {
+    const mockActivityData = [
+      {
+        user_id: 'user_id_1',
+        name: 'Test Activity 1',
+        category: 'career',
+        priority: 'high',
+        isPublished: true,
+      },
+      {
+        user_id: 'user_id_1',
+        name: 'Test Activity 3',
+        category: 'career',
+        priority: 'high',
+        isPublished: true,
+      },
+      {
+        user_id: 'user_id_1',
+        name: 'Test Activity 2',
+        category: 'career',
+        priority: 'high',
+        isPublished: true,
+      },
+    ];
     fetchById.mockResolvedValue(mockActivityData);
 
     const mockActivityRequest = {
-        user_id: 'user_id',
-      };
+      user_id: 'user_id',
+    };
 
     const response = await request(server)
-        .get('/activity/fetch/:user_id')
-        .send(mockActivityRequest);
+      .get('/activity/fetch/:user_id')
+      .send(mockActivityRequest);
 
     expect(response.statusCode).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.message).toBe('Activity retrieved');
     expect(response.body.data).toEqual(mockActivityData);
-    });
+  });
 });

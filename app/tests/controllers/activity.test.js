@@ -9,6 +9,7 @@ const {
 
 const { Activity } = require('../../src/models/activity');
 
+const fifteenMinutesFromNow = moment().add(15, 'minutes');
 describe('createActivity', () => {
   it('should create an activity', async () => {
     const mockActivityData = {
@@ -18,7 +19,7 @@ describe('createActivity', () => {
       isPublished: true,
       priority: 'low',
       status: 'not-done',
-      time: '11:20',
+      time: fifteenMinutesFromNow.format('HH:mm'),
     };
 
     mockingoose(Activity).toReturn(mockActivityData, 'save');
@@ -49,7 +50,7 @@ describe('createActivity', () => {
       'caree',
       true,
       'high',
-      '11:20'
+      fifteenMinutesFromNow.format('HH:mm')
     );
 
     expect(result).toEqual(
@@ -67,7 +68,7 @@ describe('updateActivity', () => {
       priority: 'low',
       isPublished: false,
       status: 'not-done',
-      time: '11:20',
+      time: fifteenMinutesFromNow.format('HH:mm'),
     };
 
     const updaedActivityData = {
@@ -77,7 +78,7 @@ describe('updateActivity', () => {
       priority: 'high',
       isPublished: true,
       status: 'in-progress',
-      time: '11:20',
+      time: fifteenMinutesFromNow.format('HH:mm'),
     };
 
     mockingoose(Activity).toReturn(updaedActivityData, 'findOneAndUpdate');
