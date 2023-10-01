@@ -7,6 +7,7 @@ describe('User Model', () => {
     const mockUser = {
       username: 'testuser',
       password: 'longpassword',
+      email: 'ife@gmail.com'
     };
 
     mockingoose(User).toReturn(mockUser, 'save');

@@ -20,7 +20,12 @@ const app = express();
 app.use(express.json());
 app.use(router);
 
-const mockUser = { _id: 1, username: 'test_user', password: 'test_password' };
+const mockUser = {
+  _id: 1,
+  username: 'test_user',
+  password: 'test_password',
+  email: 'ife@gmail.com',
+};
 const mockToken = jwt.sign({ id: mockUser._id }, process.env.SECRET_TOKEN, {
   expiresIn: '20m',
 });
@@ -37,11 +42,15 @@ jest.mock('../../src/controllers/blacklist', () => ({
 
 describe('create user', () => {
   it('POST /create should create a user', async () => {
-    const mockUserInput = { username: 'test_user', password: 'test_password' };
+    const mockUserInput = {
+      username: 'test_user',
+      password: 'test_password',
+      email: 'ife@gmail.com',
+    };
 
     mockingoose(User).toReturn(mockUserInput, 'save');
 
-    await createUser.mockResolvedValue(mockUser.username, mockUser.password);
+    await createUser.mockResolvedValue(mockUser.username, mockUser.password, mockUser.email);
 
     const response = await request(app).post('/create').send(mockUserInput);
 
@@ -49,14 +58,15 @@ describe('create user', () => {
     expect(response.body.message).toBe('User successfully created');
     expect(createUser).toHaveBeenCalledWith(
       mockUserInput.username,
-      mockUserInput.password
+      mockUserInput.password,
+      mockUserInput.email
     );
   });
 
   it('should handle error when createUser fails', async () => {
     createUser.mockRejectedValue(new Error('User creation failed'));
 
-    const mockUserInput = { username: 'test_user', password: 'test_password' };
+    const mockUserInput = { username: 'test_user', password: 'test_password',  email: 'ife@gmail.com' };
 
     const response = await request(app).post('/create').send(mockUserInput);
 

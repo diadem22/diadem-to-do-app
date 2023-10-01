@@ -25,12 +25,13 @@ const updateSchema = Joi.object().keys({
 
 const userCreateSchema = Joi.object().keys({
   username: Joi.string().required(),
-  password: Joi.string().min(6).required().strict()
+  password: Joi.string().min(6).required().strict(),
+  email: Joi.string().email().required()
 });
 
 const userLoginSchema = Joi.object().keys({
   username: Joi.string().required(),
-  password: Joi.string().required(),
+  password: Joi.string().min(6).required().strict(),
 });
 
 const schemas = {
