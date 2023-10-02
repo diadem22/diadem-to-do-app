@@ -17,31 +17,49 @@ const reminderQueue = new Queue('reminderQueue', {
 });
 
 const job = schedule.scheduleJob('* * * * *', async () => {
-  const currentTime = moment();
-  const fifteenMinutesFromNow = moment().add(15, 'minutes');
+  try {
+    const currentTime = moment();
 
-  const activitiesToRemind = await Activity.find({
-    status: 'not-done',
-    time: {
-      $gte: currentTime.format('HH:mm'),
-      $lte: fifteenMinutesFromNow.format('HH:mm'),
-    },
-  }).maxTimeMS(30000);
+    const notDoneActivitiesWithUsers = await Activity.aggregate([
+      {
+        $match: { status: 'not-done' },
+      },
+      {
+        $lookup: {
+          from: 'users', 
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+    ]);
 
-  for (const activity of activitiesToRemind) {
-    try {
-      const user = await User.findOne({ _id: activity.user_id });
+    for (const activityWithUser of notDoneActivitiesWithUsers) {
+      const activity = activityWithUser; 
+      const user = activityWithUser.user[0]; 
 
-      if (user && user.email) {
+      if (!user || !user.email) {
+        console.error(
+          `No user or email found for activity with ID: ${activity._id}`
+        );
+        continue;
+      }
+
+      const userTimezone = user.timezone;
+      const fifteenMinutesFromNow = moment(currentTime).add(15, 'minutes');
+      const activityTime = moment.tz(activity.time, 'HH:mm', userTimezone);
+
+      if (
+        activityTime.isSameOrAfter(currentTime) &&
+        activityTime.isBefore(fifteenMinutesFromNow)
+      ) {
         const isActivitySent = await reminderQueue.getJobs(
           ['completed', 'waiting', 'active'],
           0,
           -1,
           'asc'
         );
-        
         const activityObjectId = new ObjectId(activity._id);
-
         const isActivityAlreadySent = isActivitySent.some((job) => {
           return job.data.activity_id == activityObjectId;
         });
@@ -58,14 +76,51 @@ const job = schedule.scheduleJob('* * * * *', async () => {
             `Activity with ID ${activity._id} has already been sent as a reminder.`
           );
         }
-      } else {
-        console.error(
-          `No user or email found for activity with ID: ${activity._id}`
-        );
       }
-    } catch (error) {
-      console.error('Error fetching user or adding reminder job:', error);
     }
+  } catch (error) {
+    console.error('Error processing reminders:', error);
+  }
+});
+
+
+const eveningReminderJob = schedule.scheduleJob('0 22 * * *', async () => {
+  try {
+    const currentTime = moment();
+    const activitiesToRemind = await Activity.find({
+      $or: [{ status: 'in-progress' }, { status: 'not-done' }],
+      time: { $gte: currentTime.format('HH:mm') },
+    });
+
+    const activitiesByUser = {};
+    for (const activity of activitiesToRemind) {
+      if (!activitiesByUser[activity.user_id]) {
+        activitiesByUser[activity.user_id] = [];
+      }
+      activitiesByUser[activity.user_id].push(activity.name);
+    }
+
+    for (const user_id in activitiesByUser) {
+      const user = await User.findOne({ _id: user_id });
+
+      if (user && user.email) {
+        const emailBody = `Reminder: You have the following tasks to complete: ${activitiesByUser[
+          user_id
+        ].join(', ')}`;
+
+        await reminderQueue.add({
+          email: user.email,
+          subject: 'Evening Reminder: Your Tasks',
+          text: emailBody,
+        });
+      } else {
+        console.error(`No user or email found for user with ID: ${user_id}`);
+      }
+    }
+
+    console.log('Evening reminder emails sent.');
+  } catch (error) {
+    console.error('Error sending evening reminder emails:', error);
   }
 });
 

@@ -15,9 +15,9 @@ router.post(
   schemaValidator('/user/create'),
   verifyUsername,
   async (req, res, next) => {
-    const { username, password, email } = req.body;
+    const { username, password, email, timezone } = req.body;
 
-    await createUser(username, password, email)
+    await createUser(username, password, email, timezone)
       .then((user) =>
         res.status(200).json({
           message: 'User successfully created',

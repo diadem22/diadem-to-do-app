@@ -1,5 +1,6 @@
-const moment = require('moment');
+const moment = require('moment-timezone');
 const { Activity } = require('../models/activity');
+const { User } = require('../models/user');
 
 async function createActivity(
   user_id,
@@ -10,12 +11,28 @@ async function createActivity(
   time
 ) {
   try {
+    const user = await User.findOne({ _id: user_id });
+
+    if (!user || !user.timezone) {
+      return('User not found or user does not have a timezone.');
+    }
+
+    const userTimezone = user.timezone;
+    const currentTimeInUserTimezone = moment().tz(userTimezone);
+    const activityTimeInUserTimezone = moment(time, 'HH:mm').tz(userTimezone);
+
+   
+    if (activityTimeInUserTimezone.isBefore(currentTimeInUserTimezone)) {
+      return('The specified time is in the past.');
+    }
+
+    const currentDateInUserTimezone = currentTimeInUserTimezone.startOf('day');
 
     const existingActivity = await Activity.findOne({
       user_id: user_id,
       name: name,
       time: time,
-      date: moment().startOf('day').format(),
+      date: currentDateInUserTimezone,
     });
 
     if (existingActivity) {
@@ -28,14 +45,16 @@ async function createActivity(
         priority: priority,
         category: category,
         time: time,
+        date: currentDateInUserTimezone,
       });
       const result = await activity.save();
       return result;
-    }    
+    }
   } catch (ex) {
     console.error('Error while creating activity', ex);
   }
 }
+
 
 async function updateActivity(
   user_id,
@@ -76,16 +95,16 @@ async function fetchById(id) {
 async function listActivitiesForDay(user_id) {
   try {
     const now = moment();
-    const startOfDay = now.clone().startOf('day'); 
-    const endOfDay = now.clone().endOf('day'); 
+    const startOfDay = now.clone().startOf('day');
+    const endOfDay = now.clone().endOf('day');
 
     const activities = await Activity.find({
       user_id: user_id,
       date: {
-        $gte: startOfDay.toDate(), 
-        $lte: endOfDay.toDate(), 
+        $gte: startOfDay.toDate(),
+        $lte: endOfDay.toDate(),
       },
-    }).select('name status date time'); 
+    }).select('name status date time');
 
     return activities;
   } catch (ex) {

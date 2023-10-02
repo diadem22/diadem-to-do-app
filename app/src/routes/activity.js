@@ -37,7 +37,7 @@ router.post(
     
     if(!activity) {
       res.status(400).json({
-        message: 'Error creating activity, please check name and time again'
+        message: 'Error creating activity, please check name and time'
       });
     }
 

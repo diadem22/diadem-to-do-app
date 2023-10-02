@@ -3,12 +3,14 @@ const { User } = require('../models/user');
 async function createUser(
   username,
   password,
-  email
+  email,
+  timezone
 ) {
   let user = new User({
     username: username,
     password: password,
-    email: email
+    email: email,
+    timezone: timezone
   });
   
   try {

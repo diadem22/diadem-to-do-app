@@ -5,7 +5,7 @@ const UserSchema = new mongoose.Schema({
   username: {
     type: String,
     unique: true,
-    required: true
+    required: true,
   },
   password: {
     type: String,
@@ -14,14 +14,16 @@ const UserSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true
+    required: true,
   },
   token: {
-    type: String
-  }
+    type: String,
+  },
+  timezone: {
+    type: String,
+    required: true,
+  },
 });
-
-
 
 const User = mongoose.model('User', UserSchema);
 
