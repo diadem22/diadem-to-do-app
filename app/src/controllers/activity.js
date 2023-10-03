@@ -20,6 +20,7 @@ async function createActivity(
       return 'The specified time is in the past.';
     }
 
+    console.log(userTimezone);
     const currentDateInUserTimezone = currentTimeInUserTimezone
       .startOf('day')
       .format();
