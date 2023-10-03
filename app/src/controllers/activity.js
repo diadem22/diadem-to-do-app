@@ -12,16 +12,18 @@ async function createActivity(
   time
 ) {
   try {
-    const userTimezone = jstz.determine().name()
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const currentTimeInUserTimezone = moment().tz(userTimezone);
     const activityTimeInUserTimezone = moment(time, 'HH:mm').tz(userTimezone);
 
-   
     if (activityTimeInUserTimezone.isBefore(currentTimeInUserTimezone)) {
-      return('The specified time is in the past.');
+      return 'The specified time is in the past.';
     }
 
-    const currentDateInUserTimezone = currentTimeInUserTimezone.startOf('day');
+    const currentDateInUserTimezone = currentTimeInUserTimezone
+      .startOf('day')
+      .format();
+
 
     const existingActivity = await Activity.findOne({
       user_id: user_id,
