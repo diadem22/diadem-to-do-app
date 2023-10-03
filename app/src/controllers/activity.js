@@ -1,7 +1,7 @@
 const moment = require('moment-timezone');
 const jstz = require('jstimezonedetect');
 const { Activity } = require('../models/activity');
-const { User } = require('../models/user');
+const axios = require('axios');
 
 async function createActivity(
   user_id,
@@ -12,7 +12,8 @@ async function createActivity(
   time
 ) {
   try {
-    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const ipApiData = await axios.get('http://ip-api.com/json');
+    const userTimezone = ipApiData.data.timezone;
     const currentTimeInUserTimezone = moment().tz(userTimezone);
     const activityTimeInUserTimezone = moment(time, 'HH:mm').tz(userTimezone);
 
