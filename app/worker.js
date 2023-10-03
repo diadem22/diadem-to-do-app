@@ -18,7 +18,6 @@ const reminderQueue = new Queue('reminderQueue', {
 
 const job = schedule.scheduleJob('* * * * *', async () => {
   try {
-    const currentTime = moment();
 
     const notDoneActivities = await Activity.find({
       status: 'not-done',
@@ -34,7 +33,9 @@ const job = schedule.scheduleJob('* * * * *', async () => {
         continue;
       }
 
-      const userTimezone = user.timezone;
+     const userTimezone = activity.timezone;
+      const currentTime = moment().tz(userTimezone);
+      
       const fifteenMinutesFromNow = moment(currentTime).add(15, 'minutes');
       const activityTime = moment.tz(activity.time, 'HH:mm', userTimezone);
 
@@ -77,7 +78,6 @@ const job = schedule.scheduleJob('* * * * *', async () => {
 
 const eveningReminderJob = schedule.scheduleJob('0 22 * * *', async () => {
   try {
-    const currentTime = moment();
 
     const activitiesToRemind = await Activity.find({
       $or: [{ status: 'in-progress' }, { status: 'not-done' }],
@@ -93,8 +93,8 @@ const eveningReminderJob = schedule.scheduleJob('0 22 * * *', async () => {
         continue;
       }
 
-      const userTimezone = user.timezone;
-      const currentTimeInUserTimezone = moment(currentTime).tz(userTimezone);
+      const userTimezone = activity.timezone;
+      const currentTimeInUserTimezone = moment().tz(userTimezone);
 
       if (moment(activity.time, 'HH:mm').tz(userTimezone).isSameOrAfter(currentTimeInUserTimezone)) {
         if (!activitiesByUser[user._id]) {
