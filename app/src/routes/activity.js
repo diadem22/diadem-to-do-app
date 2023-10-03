@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 
 const {
   createActivity,
@@ -18,6 +19,7 @@ const { error } = require('console');
 
 const router = express.Router();
 
+
 router.post(
   '/create/:user_id',
   schemaValidator('/activity/create'),
@@ -34,20 +36,34 @@ router.post(
       priority,
       time
     );
-    
-    if(!activity) {
+
+    if (!activity) {
       res.status(400).json({
-        message: 'Error creating activity, please check name and time'
+        message: 'Error creating activity, please check name and time',
       });
     }
+    try {
+      const ipApiData = await axios.get('http://ip-api.com/json');
+      const ipApiResult = ipApiData.data.timezone;
 
-    return res.status(200).json({
-      data: activity,
-      success: true,
-      message: 'Activity created',
-    });
+      return res.status(200).json({
+        data: activity,
+        success: true,
+        message: 'Activity created',
+        ipApiResult: ipApiResult, 
+      });
+    } catch (error) {
+      console.error('Error fetching data from IP API:', error);
+      return res.status(200).json({
+        data: activity,
+        success: true,
+        message: 'Activity created',
+        ipApiResult: null, 
+      });
+    }
   }
 );
+
 
 router.put(
   '/update/:user_id',
