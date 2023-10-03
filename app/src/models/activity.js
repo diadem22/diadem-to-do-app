@@ -45,7 +45,11 @@ const activitySchema = new mongoose.Schema({
       message:
         'Time must be a valid time in the format HH:mm and not earlier than the current time.',
     },
-  }
+  },
+  timezone: {
+    type: String,
+    required: true,
+  },
 });
   
 const Activity = mongoose.model('Activity', activitySchema); 

@@ -1,5 +1,5 @@
 const schedule = require('node-schedule');
-const moment = require('moment');
+const moment = require('moment-timezone');
 const Queue = require('bull');
 const nodemailer = require('nodemailer');
 const { User } = require('./src/models/user');
@@ -20,23 +20,12 @@ const job = schedule.scheduleJob('* * * * *', async () => {
   try {
     const currentTime = moment();
 
-    const notDoneActivitiesWithUsers = await Activity.aggregate([
-      {
-        $match: { status: 'not-done' },
-      },
-      {
-        $lookup: {
-          from: 'users', 
-          localField: 'user_id',
-          foreignField: '_id',
-          as: 'user',
-        },
-      },
-    ]);
+    const notDoneActivities = await Activity.find({
+      status: 'not-done',
+    });
 
-    for (const activityWithUser of notDoneActivitiesWithUsers) {
-      const activity = activityWithUser; 
-      const user = activityWithUser.user[0]; 
+    for (const activity of notDoneActivities) {
+      const user = await User.findOne({ _id: activity.user_id });
 
       if (!user || !user.email) {
         console.error(
@@ -71,6 +60,8 @@ const job = schedule.scheduleJob('* * * * *', async () => {
             text: `Don't forget to complete your task: ${activity.name}`,
             activity_id: activity._id,
           });
+
+          console.log(`Reminder added for activity with ID ${activity._id}`);
         } else {
           console.log(
             `Activity with ID ${activity._id} has already been sent as a reminder.`
@@ -87,17 +78,30 @@ const job = schedule.scheduleJob('* * * * *', async () => {
 const eveningReminderJob = schedule.scheduleJob('0 22 * * *', async () => {
   try {
     const currentTime = moment();
+
     const activitiesToRemind = await Activity.find({
       $or: [{ status: 'in-progress' }, { status: 'not-done' }],
-      time: { $gte: currentTime.format('HH:mm') },
     });
 
     const activitiesByUser = {};
+
     for (const activity of activitiesToRemind) {
-      if (!activitiesByUser[activity.user_id]) {
-        activitiesByUser[activity.user_id] = [];
+      const user = await User.findOne({ _id: activity.user_id });
+
+      if (!user || !user.email) {
+        console.error(`No user or email found for activity with ID: ${activity._id}`);
+        continue;
       }
-      activitiesByUser[activity.user_id].push(activity.name);
+
+      const userTimezone = user.timezone;
+      const currentTimeInUserTimezone = moment(currentTime).tz(userTimezone);
+
+      if (moment(activity.time, 'HH:mm').tz(userTimezone).isSameOrAfter(currentTimeInUserTimezone)) {
+        if (!activitiesByUser[user._id]) {
+          activitiesByUser[user._id] = [];
+        }
+        activitiesByUser[user._id].push(activity.name);
+      }
     }
 
     for (const user_id in activitiesByUser) {
@@ -123,6 +127,7 @@ const eveningReminderJob = schedule.scheduleJob('0 22 * * *', async () => {
     console.error('Error sending evening reminder emails:', error);
   }
 });
+
 
 async function sendReminder(jobData) {
   const { email, subject, text, activity_id } = jobData;

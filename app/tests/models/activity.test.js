@@ -1,4 +1,5 @@
 const moment = require('moment');
+const jstz = require('jstimezonedetect');
 const mockingoose = require('mockingoose');
 const { Activity } = require('../../src/models/activity');
 
@@ -14,6 +15,7 @@ describe('Activity Model', () => {
       priority: 'low',
       time: fifteenMinutesFromNow.format('HH:mm'),
       date: moment().startOf('day').format(),
+      timezone: jstz.determine().name()
     };
 
     mockingoose(Activity).toReturn(mockActivityData, 'save');

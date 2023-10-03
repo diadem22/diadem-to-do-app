@@ -1,4 +1,5 @@
 const moment = require('moment');
+const jstz = require('jstimezonedetect');
 const mockingoose = require('mockingoose');
 const {
   createActivity,
@@ -21,6 +22,7 @@ describe('createActivity', () => {
       status: 'not-done',
       time: fifteenMinutesFromNow.format('HH:mm'),
       date: moment().startOf('day').format(),
+      timezone: jstz.determine().name()
     };
 
     mockingoose(Activity).toReturn(mockActivityData, 'save');
@@ -54,7 +56,7 @@ describe('createActivity', () => {
       fifteenMinutesFromNow.format('HH:mm')
     );
 
-    expect(result).toEqual('User not found or user does not have a timezone.');
+    expect(result).toEqual(undefined);
   }, 30000);
 }, 30000);
 

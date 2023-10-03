@@ -1,4 +1,5 @@
 const moment = require('moment-timezone');
+const jstz = require('jstimezonedetect');
 const { Activity } = require('../models/activity');
 const { User } = require('../models/user');
 
@@ -11,13 +12,7 @@ async function createActivity(
   time
 ) {
   try {
-    const user = await User.findOne({ _id: user_id });
-
-    if (!user || !user.timezone) {
-      return('User not found or user does not have a timezone.');
-    }
-
-    const userTimezone = user.timezone;
+    const userTimezone = jstz.determine().name()
     const currentTimeInUserTimezone = moment().tz(userTimezone);
     const activityTimeInUserTimezone = moment(time, 'HH:mm').tz(userTimezone);
 
@@ -46,6 +41,7 @@ async function createActivity(
         category: category,
         time: time,
         date: currentDateInUserTimezone,
+        timezone: userTimezone
       });
       const result = await activity.save();
       return result;
