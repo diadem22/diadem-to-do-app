@@ -15,7 +15,11 @@ async function createActivity(
     const ipApiData = await axios.get('http://ip-api.com/json');
     const userTimezone = ipApiData.data.timezone;
     const currentTimeInUserTimezone = moment().tz(userTimezone);
-    const activityTimeInUserTimezone = moment(time, 'HH:mm').tz();
+    const activityTimeInUserTimezone = moment.tz(
+      time,
+      'HH:mm',
+      userTimezone
+    );
 
     if (activityTimeInUserTimezone.isBefore(currentTimeInUserTimezone)) {
       return 'The specified time is in the past.';
