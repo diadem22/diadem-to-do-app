@@ -13,6 +13,7 @@ describe('Activity Model', () => {
       isPublished: true,
       priority: 'low',
       time: fifteenMinutesFromNow.format('HH:mm'),
+      date: moment().startOf('day').format(),
     };
 
     mockingoose(Activity).toReturn(mockActivityData, 'save');

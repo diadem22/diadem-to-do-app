@@ -46,6 +46,7 @@ describe('create user', () => {
       username: 'test_user',
       password: 'test_password',
       email: 'ife@gmail.com',
+      timezone: 'Africa/Lagos'
     };
 
     mockingoose(User).toReturn(mockUserInput, 'save');
@@ -59,14 +60,20 @@ describe('create user', () => {
     expect(createUser).toHaveBeenCalledWith(
       mockUserInput.username,
       mockUserInput.password,
-      mockUserInput.email
+      mockUserInput.email,
+      mockUserInput.timezone
     );
   });
 
   it('should handle error when createUser fails', async () => {
     createUser.mockRejectedValue(new Error('User creation failed'));
 
-    const mockUserInput = { username: 'test_user', password: 'test_password',  email: 'ife@gmail.com' };
+    const mockUserInput = {
+      username: 'test_user',
+      password: 'test_password',
+      email: 'ife@gmail.com',
+      timezone: 'Africa/Lagos',
+    };
 
     const response = await request(app).post('/create').send(mockUserInput);
 

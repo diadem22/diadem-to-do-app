@@ -20,6 +20,7 @@ describe('createActivity', () => {
       priority: 'low',
       status: 'not-done',
       time: fifteenMinutesFromNow.format('HH:mm'),
+      date: moment().startOf('day').format(),
     };
 
     mockingoose(Activity).toReturn(mockActivityData, 'save');
@@ -53,9 +54,7 @@ describe('createActivity', () => {
       fifteenMinutesFromNow.format('HH:mm')
     );
 
-    expect(result).toEqual(
-      undefined
-    );
+    expect(result).toEqual('User not found or user does not have a timezone.');
   }, 30000);
 }, 30000);
 

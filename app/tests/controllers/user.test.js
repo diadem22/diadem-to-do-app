@@ -8,12 +8,18 @@ describe('createUser', () => {
       _id: '60f8d0f7d4f7279cbaf6e789',
       username: 'testuser',
       password: 'longpassword',
-      email: 'ife@gmail.com'
+      email: 'ife@gmail.com',
+      timezone: 'Africa/Lagos'
     };
 
     mockingoose(User).toReturn(mockUser, 'save');
 
-    const result = await createUser('testuser', 'longpassword', 'ife@gmail.com');
+    const result = await createUser(
+      'testuser',
+      'longpassword',
+      'ife@gmail.com',
+      'Africa/Lagos'
+    );
 
     expect(result).toBeDefined();
     expect(result._id.toString()).toBe(mockUser._id);
@@ -25,7 +31,12 @@ describe('createUser', () => {
   it('should handle user creation error', async () => {
     mockingoose(User).toReturn(new Error('Error saving user'), 'save');
 
-    const result = await createUser('testuser', 'longp', 'ife@gmail.com');
+    const result = await createUser(
+      'testuser',
+      'longp',
+      'ife@gmail.com',
+      'Africa/Lagos'
+    );
 
     expect(result).toBe(
       'Path `password` (`longp`) is shorter than the minimum allowed length (6).'
