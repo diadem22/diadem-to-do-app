@@ -30,6 +30,8 @@ async function createActivity(
       .startOf('day')
       .format();
 
+    console.log(currentDateInUserTimezone);
+
 
     const existingActivity = await Activity.findOne({
       user_id: user_id,
