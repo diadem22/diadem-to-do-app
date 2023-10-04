@@ -26,7 +26,7 @@ async function createActivity(
     }
 
     console.log(userTimezone);
-    const currentDateInUserTimezone = currentTimeInUserTimezone
+    const currentDateInUserTimezone = moment
       .startOf('day')
       .format();
 

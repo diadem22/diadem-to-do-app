@@ -96,7 +96,7 @@ const eveningReminderJob = schedule.scheduleJob('0 22 * * *', async () => {
       const userTimezone = activity.timezone;
       const currentTimeInUserTimezone = moment().tz(userTimezone);
 
-      if (moment(activity.time, 'HH:mm').tz(userTimezone).isSameOrAfter(currentTimeInUserTimezone)) {
+      if (moment.tz(activity.time, 'HH:mm', userTimezone).isSameOrAfter(currentTimeInUserTimezone)) {
         if (!activitiesByUser[user._id]) {
           activitiesByUser[user._id] = [];
         }
