@@ -20,17 +20,22 @@ async function createActivity(
       'HH:mm',
       userTimezone
     );
+    
+    const activityTimeInUserTimezone1 = moment(time, 'HH:mm').tz(userTimezone);
 
+    console.log(
+      `activityTimeInUserTimezone1- ${activityTimeInUserTimezone1}`
+    );
+    console.log(`currentTimeInUserTimezone- ${currentTimeInUserTimezone}`);
+    console.log(`activityTimeInUserTimezone- ${activityTimeInUserTimezone}`);
     if (activityTimeInUserTimezone.isBefore(currentTimeInUserTimezone)) {
       return 'The specified time is in the past.';
     }
 
     console.log(userTimezone);
-    const currentDateInUserTimezone = moment()
+    const currentDateInUserTimezone = currentTimeInUserTimezone
       .startOf('day')
       .format();
-
-    console.log(currentDateInUserTimezone);
 
 
     const existingActivity = await Activity.findOne({
