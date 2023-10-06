@@ -35,10 +35,13 @@ const job = schedule.scheduleJob('* * * * *', async () => {
 
      const userTimezone = activity.timezone;
       const currentTime = moment().tz(userTimezone);
+      const currentDateInUserTimezone = moment()
+        .tz(userTimezone)
+        .format('YYYY-MM-DD');
       
       const fifteenMinutesFromNow = moment(currentTime).add(15, 'minutes');
       const activityTime = moment.tz(
-        activity.time + ' ' + currentTime.format('YYYY-MM-DD'),
+        activity.time + ' ' + currentDateInUserTimezone,
         'HH:mm YYYY-MM-DD',
         userTimezone
       );
@@ -81,7 +84,7 @@ const job = schedule.scheduleJob('* * * * *', async () => {
 });
 
 
-const eveningReminderJob = schedule.scheduleJob('* * * * *', async () => {
+const eveningReminderJob = schedule.scheduleJob('* 22 * * *', async () => {
   try {
 
     const activitiesToRemind = await Activity.find({
