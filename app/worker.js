@@ -37,7 +37,12 @@ const job = schedule.scheduleJob('* * * * *', async () => {
       const currentTime = moment().tz(userTimezone);
       
       const fifteenMinutesFromNow = moment(currentTime).tz(userTimezone).add(15, 'minutes');
-      const activityTime = moment.tz(activity.time, 'HH:mm', userTimezone);
+      const activityTime = moment.tz(
+        activity.time + ' ' + currentTime,
+        'HH:mm YYYY-MM-DD',
+        userTimezone
+      );
+
 
       if (
         activityTime.isSameOrAfter(currentTime) &&
