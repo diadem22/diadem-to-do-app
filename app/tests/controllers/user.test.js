@@ -17,7 +17,8 @@ describe('createUser', () => {
     const result = await createUser(
       'testuser',
       'longpassword',
-      'ife@gmail.com'
+      'ife@gmail.com',
+      'Africa/Lagos'
     );
 
     expect(result).toBeDefined();
@@ -33,7 +34,8 @@ describe('createUser', () => {
     const result = await createUser(
       'testuser',
       'longp',
-      'ife@gmail.com'
+      'ife@gmail.com',
+      'Africa/Lagos'
     );
 
     expect(result).toBe(

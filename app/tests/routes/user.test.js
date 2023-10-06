@@ -45,7 +45,8 @@ describe('create user', () => {
     const mockUserInput = {
       username: 'test_user',
       password: 'test_password',
-      email: 'ife@gmail.com'
+      email: 'ife@gmail.com',
+      timezone: 'Africa/Lagos',
     };
 
     mockingoose(User).toReturn(mockUserInput, 'save');
@@ -59,7 +60,8 @@ describe('create user', () => {
     expect(createUser).toHaveBeenCalledWith(
       mockUserInput.username,
       mockUserInput.password,
-      mockUserInput.email
+      mockUserInput.email,
+      mockUserInput.timezone
     );
   });
 
@@ -69,7 +71,8 @@ describe('create user', () => {
     const mockUserInput = {
       username: 'test_user',
       password: 'test_password',
-      email: 'ife@gmail.com'
+      email: 'ife@gmail.com',
+      timezone: 'Africa/Lagos',
     };
 
     const response = await request(app).post('/create').send(mockUserInput);

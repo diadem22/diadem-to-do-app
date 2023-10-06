@@ -18,7 +18,11 @@ const UserSchema = new mongoose.Schema({
   },
   token: {
     type: String,
-  }
+  },
+  timezone: {
+    type: String,
+    required: true,
+  },
 });
 
 const User = mongoose.model('User', UserSchema);

@@ -2,6 +2,7 @@ const moment = require('moment-timezone');
 const jstz = require('jstimezonedetect');
 const { Activity } = require('../models/activity');
 const axios = require('axios');
+const { User } = require('../models/user');
 
 async function createActivity(
   user_id,
@@ -12,30 +13,41 @@ async function createActivity(
   time
 ) {
   try {
-    const ipApiData = await axios.get('http://ip-api.com/json');
-    const userTimezone = ipApiData.data.timezone;
-    const currentTimeInUserTimezone = moment().tz(userTimezone);
-    const activityTimeInUserTimezone = moment.tz(
-      time,
-      'HH:mm',
-      userTimezone
-    );
+    const user = await User.findOne({
+      _id: user_id
+    })
+    // const ipApiData = await axios.get('http://ip-api.com/json');
+    const userTimezone = user.timezone
+    const currentDateInUserTimezone = moment()
+      .tz(userTimezone)
+      .format('YYYY-MM-DD');
+    // const activityTimeInUserTimezone = moment.tz(
+    //   time,
+    //   'HH:mm',
+    //   userTimezone
+    // );
+
+    const activityTimeInUserTimezone = moment(
+      time + ' ' + currentDateInUserTimezone,
+      'HH:mm YYYY-MM-DD'
+    ).tz(userTimezone);
     
     const activityTimeInUserTimezone1 = moment(time, 'HH:mm').tz(userTimezone);
+    const currentTimeInUserTimezone = moment().tz(userTimezone);
 
     console.log(
       `activityTimeInUserTimezone1- ${activityTimeInUserTimezone1}`
     );
-    console.log(`currentTimeInUserTimezone- ${currentTimeInUserTimezone}`);
+    // console.log(`currentTimeInUserTimezone- ${currentTimeInUserTimezone}`);
     console.log(`activityTimeInUserTimezone- ${activityTimeInUserTimezone}`);
     if (activityTimeInUserTimezone.isBefore(currentTimeInUserTimezone)) {
       return 'The specified time is in the past.';
     }
 
     console.log(userTimezone);
-    const currentDateInUserTimezone = currentTimeInUserTimezone
-      .startOf('day')
-      .format();
+    // const currentDateInUserTimezone = currentTimeInUserTimezone
+    //   .startOf('day')
+    //   .format();
 
 
     const existingActivity = await Activity.findOne({
@@ -56,7 +68,7 @@ async function createActivity(
         category: category,
         time: time,
         date: currentDateInUserTimezone,
-        timezone: userTimezone
+        timezone: userTimezone,
       });
       const result = await activity.save();
       return result;

@@ -22,7 +22,7 @@ describe('createActivity', () => {
       status: 'not-done',
       time: fifteenMinutesFromNow.format('HH:mm'),
       date: moment().startOf('day').format(),
-      timezone: jstz.determine().name()
+      timezone: 'Africa/Lagos',
     };
 
     mockingoose(Activity).toReturn(mockActivityData, 'save');
