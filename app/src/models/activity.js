@@ -36,14 +36,13 @@ const activitySchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: function (value) {
-        const currentTime = moment();
         const providedTime = moment(value, 'HH:mm', true);
         return (
-          providedTime.isValid() && providedTime.isSameOrAfter(currentTime)
+          providedTime.isValid()
         );
       },
       message:
-        'Time must be a valid time in the format HH:mm and not earlier than the current time.',
+        'Time must be a valid time in the format HH:mm',
     },
   },
   timezone: {

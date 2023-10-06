@@ -32,15 +32,19 @@ async function createActivity(
       'HH:mm YYYY-MM-DD'
     ).tz(userTimezone);
     
-    const activityTimeInUserTimezone1 = moment(time, 'HH:mm').tz(userTimezone);
+    const activityTimeInUserTimezone1 = moment.tz(
+      time + ' ' + currentDateInUserTimezone,
+      'HH:mm YYYY-MM-DD',
+      userTimezone
+    );
     const currentTimeInUserTimezone = moment().tz(userTimezone);
 
     console.log(
       `activityTimeInUserTimezone1- ${activityTimeInUserTimezone1}`
     );
-    // console.log(`currentTimeInUserTimezone- ${currentTimeInUserTimezone}`);
+    console.log(`currentTimeInUserTimezone- ${currentTimeInUserTimezone}`);
     console.log(`activityTimeInUserTimezone- ${activityTimeInUserTimezone}`);
-    if (activityTimeInUserTimezone.isBefore(currentTimeInUserTimezone)) {
+    if (activityTimeInUserTimezone1.isBefore(currentTimeInUserTimezone)) {
       return 'The specified time is in the past.';
     }
 
