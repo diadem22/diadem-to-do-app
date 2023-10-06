@@ -26,17 +26,17 @@ const job = schedule.scheduleJob('* * * * *', async () => {
     for (const activity of notDoneActivities) {
       const user = await User.findOne({ _id: activity.user_id });
 
-      if (!user || !user.email) {
-        console.error(
-          `No user or email found for activity with ID: ${activity._id}`
-        );
-        continue;
-      }
+      // if (!user || !user.email) {
+      //   console.error(
+      //     `No user or email found for activity with ID: ${activity._id}`
+      //   );
+      //   continue;
+      // }
 
      const userTimezone = activity.timezone;
       const currentTime = moment().tz(userTimezone);
       
-      const fifteenMinutesFromNow = moment(currentTime).tz(userTimezone).add(15, 'minutes');
+      const fifteenMinutesFromNow = moment(currentTime).add(15, 'minutes');
       const activityTime = moment.tz(
         activity.time + ' ' + currentTime,
         'HH:mm YYYY-MM-DD',
