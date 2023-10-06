@@ -66,7 +66,7 @@ const job = schedule.scheduleJob('* * * * *', async () => {
           await reminderQueue.add({
             email: user.email,
             subject: 'Reminder: Your Task',
-            text: `Don't forget to complete your task: ${activity.name}`,
+            text: `Don't forget to complete your task: ${activity.name} set for ${activity.time}`,
             activity_id: activity._id,
           });
 
