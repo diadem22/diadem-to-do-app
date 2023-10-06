@@ -38,7 +38,7 @@ const job = schedule.scheduleJob('* * * * *', async () => {
       
       const fifteenMinutesFromNow = moment(currentTime).add(15, 'minutes');
       const activityTime = moment.tz(
-        activity.time + ' ' + currentTime,
+        activity.time + ' ' + currentTime.format('YYYY-MM-DD'),
         'HH:mm YYYY-MM-DD',
         userTimezone
       );
