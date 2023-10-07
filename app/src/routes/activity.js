@@ -57,13 +57,16 @@ router.put(
   verifyAccess,
   async (req, res, next) => {
     const { user_id } = req.params;
-    const { activity_id, priority, category, status } = req.body;
+    const { activity_id, category, priority, status } = req.body;
+
+    console.log(req.params);
+    console.log(req.body)
 
       const activity = await updateActivity(
         user_id,
         activity_id,
-        priority,
         category,
+        priority,
         status
       );
       return res
