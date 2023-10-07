@@ -3,6 +3,7 @@ const jstz = require('jstimezonedetect');
 const { Activity } = require('../models/activity');
 const axios = require('axios');
 const { User } = require('../models/user');
+const { ObjectId } = require('mongoose').Types;
 
 async function createActivity(
   user_id,
@@ -90,10 +91,12 @@ async function updateActivity(
   priority,
   status
 ) {
+  console.log(user_id)
+  console.log(activity_id)
   const result = await Activity.findOneAndUpdate(
     {
       user_id: user_id,
-      _id: activity_id,
+      _id: new ObjectId(activity_id),
     },
     {
       $set: {
@@ -107,8 +110,10 @@ async function updateActivity(
       new: true,
     }
   );
+  console.log(result)
+  const updatedActivity = await result.save()
 
-  return result;
+  return updatedActivity;
 }
 
 async function fetchById(id) {
@@ -139,6 +144,17 @@ async function listActivitiesForDay(user_id) {
     throw ex;
   }
 }
+
+const deleteActivitiesBeforeDate = async () => {
+  try {
+    const result = await User.deleteMany({ timezone: { $exists: false } });
+    console.log(`${result.deletedCount} users deleted.`);
+  } catch (error) {
+    console.error('Error deleting users:', error);
+  } 
+};
+
+deleteActivitiesBeforeDate();
 
 module.exports = {
   createActivity,
