@@ -1,5 +1,4 @@
 const moment = require('moment');
-const jstz = require('jstimezonedetect');
 const mockingoose = require('mockingoose');
 const {
   createActivity,
@@ -9,20 +8,37 @@ const {
 } = require('../../src/controllers/activity');
 
 const { Activity } = require('../../src/models/activity');
+const { User } = require('../../src/models/user');
+const currentTime = moment().tz('Africa/Lagos');
+const currentDateInUserTimezone = moment()
+  .tz('Africa/Lagos')
+  .format('YYYY-MM-DD');
 
-const fifteenMinutesFromNow = moment().add(15, 'minutes');
+const fifteenMinutesFromNow = moment(currentTime).add(15, 'minutes');
+
+
 describe('createActivity', () => {
   it('should create an activity', async () => {
+
+    const mockUser = {
+      _id: '60f8d0f7d4f7279cbaf6e789',
+      username: 'testuser',
+      password: 'longpassword',
+      email: 'ife@gmail.com',
+      timezone: 'Africa/Lagos',
+    };
+
+    mockingoose(User).toReturn(mockUser, 'findOne')
     const mockActivityData = {
-      user_id: 'user_id_1',
+      user_id: '60f8d0f7d4f7279cbaf6e789',
       name: 'Test Activity',
       category: 'personal',
       isPublished: true,
       priority: 'low',
       status: 'not-done',
       time: fifteenMinutesFromNow.format('HH:mm'),
-      date: moment().startOf('day').format(),
-      timezone: 'Africa/Lagos',
+      timezone: mockUser.timezone,
+      date: currentDateInUserTimezone,
     };
 
     mockingoose(Activity).toReturn(mockActivityData, 'save');
@@ -45,7 +61,6 @@ describe('createActivity', () => {
   }, 30000);
 
   it('should handle errors during activity creation', async () => {
-    mockingoose(Activity).toReturn(new Error('Mocked error'), 'save');
 
     const result = await createActivity(
       'user_id_2',
@@ -56,45 +71,53 @@ describe('createActivity', () => {
       fifteenMinutesFromNow.format('HH:mm')
     );
 
-    expect(result).toEqual(undefined);
+    expect(result).toEqual(
+      '`caree` is not a valid enum value for path `category`.'
+    );
   }, 30000);
 }, 30000);
 
 describe('updateActivity', () => {
-  it('should update and return activity', async () => {
-    const mockActivityData = {
+  it('should update activity status and priority', async () => {
+    // const mockActivityData = {
+    //   user_id: 'user_id_1',
+    //   activity_id: '6521b555d4ad8ce03e54417a',
+    //   name: 'Test Activity',
+    //   category: 'personal',
+    //   priority: 'low',
+    //   isPublished: false,
+    //   status: 'not-done',
+    //   time: fifteenMinutesFromNow.format('HH:mm'),
+    // };
+
+    const updatedActivityData = {
       user_id: 'user_id_1',
+      activity_id: '6521b555d4ad8ce03e54418c',
       name: 'Test Activity',
       category: 'personal',
-      priority: 'low',
-      isPublished: false,
-      status: 'not-done',
-      time: fifteenMinutesFromNow.format('HH:mm'),
-    };
-
-    const updaedActivityData = {
-      user_id: 'user_id_1',
-      name: 'Test Activity',
-      category: 'career',
       priority: 'high',
       isPublished: true,
-      status: 'in-progress',
+      status: 'not-done',
       time: fifteenMinutesFromNow.format('HH:mm'),
+      timezone: 'Africa/Lagos',
+      date: moment().startOf('day').format(),
     };
 
-    mockingoose(Activity).toReturn(updaedActivityData, 'findOneAndUpdate');
+    mockingoose(Activity).toReturn(updatedActivityData, 'findOneAndUpdate');
 
     const result = await updateActivity(
-      mockActivityData.user_id,
-      mockActivityData.name,
-      mockActivityData.category,
-      mockActivityData.priority
+      updatedActivityData.user_id,
+      updatedActivityData.activity_id,
+      updatedActivityData.category,
+      updatedActivityData.priority,
+      updatedActivityData.status
     );
-
-    expect(result.category).toBe(updaedActivityData.category);
-    expect(result.priority).toBe(updaedActivityData.priority);
+    
+    expect(result.status).toBe(updatedActivityData.status);
+    expect(result.category).toBe(updatedActivityData.category);
   });
 });
+
 
 describe('fetchById', () => {
   it('should fetch all activities for the user', async () => {

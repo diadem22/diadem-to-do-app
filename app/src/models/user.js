@@ -15,6 +15,14 @@ const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
+    validate: {
+      validator: async function (email) {
+        const user = await this.constructor.findOne({ email });
+        return !user; 
+      },
+      message: 'Email address is already in use.',
+    },
   },
   token: {
     type: String,

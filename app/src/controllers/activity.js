@@ -1,5 +1,4 @@
 const moment = require('moment-timezone');
-const jstz = require('jstimezonedetect');
 const { Activity } = require('../models/activity');
 const axios = require('axios');
 const { User } = require('../models/user');
@@ -17,16 +16,12 @@ async function createActivity(
     const user = await User.findOne({
       _id: user_id
     })
-    // const ipApiData = await axios.get('http://ip-api.com/json');
     const userTimezone = user.timezone
+    
     const currentDateInUserTimezone = moment()
       .tz(userTimezone)
       .format('YYYY-MM-DD');
-    // const activityTimeInUserTimezone = moment.tz(
-    //   time,
-    //   'HH:mm',
-    //   userTimezone
-    // );
+    
 
     const activityTimeInUserTimezone = moment(
       time + ' ' + currentDateInUserTimezone,
@@ -38,22 +33,11 @@ async function createActivity(
       'HH:mm YYYY-MM-DD',
       userTimezone
     );
+    console.log('gen')
     const currentTimeInUserTimezone = moment().tz(userTimezone);
-
-    console.log(
-      `activityTimeInUserTimezone1- ${activityTimeInUserTimezone1}`
-    );
-    console.log(`currentTimeInUserTimezone- ${currentTimeInUserTimezone}`);
-    console.log(`activityTimeInUserTimezone- ${activityTimeInUserTimezone}`);
     if (activityTimeInUserTimezone1.isBefore(currentTimeInUserTimezone)) {
       return 'The specified time is in the past.';
     }
-
-    console.log(userTimezone);
-    // const currentDateInUserTimezone = currentTimeInUserTimezone
-    //   .startOf('day')
-    //   .format();
-
 
     const existingActivity = await Activity.findOne({
       user_id: user_id,
@@ -79,7 +63,7 @@ async function createActivity(
       return result;
     }
   } catch (ex) {
-    console.error('Error while creating activity', ex);
+    for (field in ex.errors) return ex.errors[field].message;
   }
 }
 
@@ -91,8 +75,6 @@ async function updateActivity(
   priority,
   status
 ) {
-  console.log(user_id)
-  console.log(activity_id)
   const result = await Activity.findOneAndUpdate(
     {
       user_id: user_id,
@@ -110,7 +92,6 @@ async function updateActivity(
       new: true,
     }
   );
-  console.log(result)
   const updatedActivity = await result.save()
 
   return updatedActivity;
@@ -145,20 +126,9 @@ async function listActivitiesForDay(user_id) {
   }
 }
 
-const deleteActivitiesBeforeDate = async () => {
-  try {
-    const result = await User.deleteMany({ timezone: { $exists: false } });
-    console.log(`${result.deletedCount} users deleted.`);
-  } catch (error) {
-    console.error('Error deleting users:', error);
-  } 
-};
-
-deleteActivitiesBeforeDate();
-
 module.exports = {
   createActivity,
   updateActivity,
   fetchById,
-  listActivitiesForDay,
+  listActivitiesForDay
 };

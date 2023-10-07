@@ -18,34 +18,25 @@ const reminderQueue = new Queue('reminderQueue', {
 
 const job = schedule.scheduleJob('* * * * *', async () => {
   try {
-
     const notDoneActivities = await Activity.find({
       status: 'not-done',
     });
 
     for (const activity of notDoneActivities) {
-      const user = await User.findOne({ _id: activity.user_id });
+      const user = await User.findOne({ _id: new ObjectId(activity.user_id) });
 
-      // if (!user || !user.email) {
-      //   console.error(
-      //     `No user or email found for activity with ID: ${activity._id}`
-      //   );
-      //   continue;
-      // }
-
-     const userTimezone = activity.timezone;
+      const userTimezone = activity.timezone;
       const currentTime = moment().tz(userTimezone);
       const currentDateInUserTimezone = moment()
         .tz(userTimezone)
         .format('YYYY-MM-DD');
-      
+
       const fifteenMinutesFromNow = moment(currentTime).add(15, 'minutes');
       const activityTime = moment.tz(
         activity.time + ' ' + currentDateInUserTimezone,
         'HH:mm YYYY-MM-DD',
         userTimezone
       );
-
 
       if (
         activityTime.isSameOrAfter(currentTime) &&
@@ -66,8 +57,16 @@ const job = schedule.scheduleJob('* * * * *', async () => {
           await reminderQueue.add({
             email: user.email,
             subject: 'Reminder: Your Task',
-            text: `Don't forget to complete your task: ${activity.name} set for ${activity.time}`,
+            html: `
+              <html>
+                <body>
+                  <p>Don't forget to complete your task:</p>
+                  <p>${activity.name} set for ${activity.time}</p>
+                </body>
+              </html>
+            `,
             activity_id: activity._id,
+            text: `Don't forget to complete your task: ${activity.name} set for ${activity.time}`,
           });
 
           console.log(`Reminder added for activity with ID ${activity._id}`);
@@ -84,62 +83,77 @@ const job = schedule.scheduleJob('* * * * *', async () => {
 });
 
 
-const eveningReminderJob = schedule.scheduleJob('* 22 * * *', async () => {
+
+const eveningReminderJob = schedule.scheduleJob('* * * * *', async () => {
   try {
+    const users = await User.find();
 
-    const activitiesToRemind = await Activity.find({
-      $or: [{ status: 'in-progress' }, { status: 'not-done' }],
-    });
-
-    const activitiesByUser = {};
-
-    for (const activity of activitiesToRemind) {
-      const user = await User.findOne({ _id: activity.user_id });
-
-      if (!user || !user.email) {
-        console.error(`No user or email found for activity with ID: ${activity._id}`);
-        continue;
-      }
-
-      const userTimezone = activity.timezone;
+    for (const user of users) {
+      const userTimezone = user.timezone;
       const currentTimeInUserTimezone = moment().tz(userTimezone);
 
-      if (moment.tz(activity.time, 'HH:mm', userTimezone).isSameOrAfter(currentTimeInUserTimezone)) {
-        if (!activitiesByUser[user._id]) {
-          activitiesByUser[user._id] = [];
-        }
-        activitiesByUser[user._id].push(activity.name);
-      }
-    }
-
-    
-    for (const user_id in activitiesByUser) {
-      const user = await User.findOne({ _id: user_id });
-
-      if (user && user.email) {
-        const emailBody = `Reminder: You have the following tasks to complete: ${activitiesByUser[
-          user_id
-        ].join(', ')}`;
-
-        await reminderQueue.add({
-          email: user.email,
-          subject: 'Evening Reminder: Your Tasks',
-          text: emailBody,
+      if (
+        currentTimeInUserTimezone.isSame(
+          moment.tz(userTimezone).hour(21).minute(47).second(0),
+          'minute'
+        )
+      ) {
+        const currentDateInUserTimezone =
+          currentTimeInUserTimezone.format('YYYY-MM-DD');
+        const activitiesToRemind = await Activity.find({
+          $or: [{ status: 'in-progress' }, { status: 'not-done' }],
+          user_id: user._id,
+          date: currentDateInUserTimezone,
         });
-      } else {
-        console.error(`No user or email found for user with ID: ${user_id}`);
+
+        const activitiesByUser = {};
+
+        for (const activity of activitiesToRemind) {
+          if (!activitiesByUser[user._id]) {
+            activitiesByUser[user._id] = [];
+          }
+          activitiesByUser[user._id].push(
+            `${activity.name}: status- ${activity.status}\n`
+          );
+        }
+
+        if (Object.keys(activitiesByUser).length > 0) { 
+
+          await reminderQueue.add({
+            email: user.email,
+            subject: 'Evening Reminder: Your Tasks',
+            html: `
+            <html>
+              <body>
+                <h2>Reminder: You have the following tasks to complete today:</h2>
+                <ul>
+                  ${activitiesByUser[user._id]
+                    .map((activity) => `<li>${activity}</li>`)
+                    .join('')}
+                </ul>
+              </body>
+            </html>
+          `,
+          text: `Reminder: You have the following tasks to complete today: \n \n ${activitiesByUser[
+            user._id
+          ].join('\n ')}` 
+          });
+
+          console.log(
+            `Evening reminder email sent to user with ID: ${user._id}`
+          );
+        }
       }
     }
-
-    console.log('Evening reminder emails sent.');
   } catch (error) {
     console.error('Error sending evening reminder emails:', error);
   }
 });
 
 
+
 async function sendReminder(jobData) {
-  const { email, subject, text, activity_id } = jobData;
+  const { email, subject, html, text, activity_id } = jobData;
 
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -153,7 +167,8 @@ async function sendReminder(jobData) {
     from: process.env.EMAIL,
     to: email,
     subject: subject,
-    text: text,
+    html: html,
+    text: text
   };
 
   try {

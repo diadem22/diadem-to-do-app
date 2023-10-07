@@ -18,7 +18,6 @@ const activitySchema = new mongoose.Schema({
   date: {
     type: Date,
     required: true,
-    // default: moment().startOf('day').format(),
   },
   isPublished: { type: Boolean },
   priority: {

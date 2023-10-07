@@ -59,9 +59,6 @@ router.put(
     const { user_id } = req.params;
     const { activity_id, category, priority, status } = req.body;
 
-    console.log(req.params);
-    console.log(req.body)
-
       const activity = await updateActivity(
         user_id,
         activity_id,
@@ -104,4 +101,3 @@ router.get('/fetch-daily-tasks/:user_id', verifyToken, verifyAccess, async (req,
 
 module.exports = router;
 
-// 64b94ca91fe6019722dd5582

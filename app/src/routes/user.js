@@ -1,13 +1,13 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models/user');
-const { createUser, loginUser } = require('../controllers/user');
+const { createUser, loginUser, updateUser } = require('../controllers/user');
 const router = express.Router();
 const {
   checkBlacklisted,
   createBlackList,
 } = require('../controllers/blacklist');
-const { verifyUsername } = require('../middleware/auth');
+const { verifyUsername, verifyAccess, verifyToken } = require('../middleware/auth');
 const { schemaValidator } = require('../middleware/validate');
 
 router.post(
@@ -59,6 +59,22 @@ router.post(
         user_id: user._id,
       });
     }
+  }
+);
+
+router.put(
+  '/update/:user_id',
+  schemaValidator('/user/update'),
+  verifyToken,
+  verifyAccess,
+  async (req, res, next) => {
+    const { user_id } = req.params;
+    const { email, timezone } = req.body;
+
+      const user = await updateUser(user_id, email, timezone)
+      return res
+        .status(200)
+        .json({ data: user, success: true, message: 'User updated' });
   }
 );
 

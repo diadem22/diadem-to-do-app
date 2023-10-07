@@ -2,13 +2,13 @@ const express = require('express');
 const request = require('supertest');
 const mockingoose = require('mockingoose');
 const jwt = require('jsonwebtoken');
-const { createUser, loginUser } = require('../../src/controllers/user');
+const { createUser, loginUser, updateUser} = require('../../src/controllers/user');
 const { User } = require('../../src/models/user');
 const {
   checkBlacklisted,
   createBlackList,
 } = require('../../src/controllers/blacklist');
-const { verifyUsername } = require('../../src/middleware/auth');
+
 const { schemaValidator } = require('../../src/middleware/validate');
 const router = require('../../src/routes/user');
 const dotenv = require('dotenv');
@@ -33,12 +33,20 @@ const mockToken = jwt.sign({ id: mockUser._id }, process.env.SECRET_TOKEN, {
 jest.mock('../../src/controllers/user', () => ({
   createUser: jest.fn(),
   loginUser: jest.fn(),
+  updateUser: jest.fn()
 }));
 
 jest.mock('../../src/controllers/blacklist', () => ({
   checkBlacklisted: jest.fn(),
   createBlackList: jest.fn(),
 }));
+
+jest.mock('../../src/middleware/auth', () => ({
+  verifyToken: jest.fn((req, res, next) => next()),
+  verifyAccess: jest.fn((req, res, next) => next()),
+  verifyUsername: jest.fn((req, res, next) => next()),
+}));
+
 
 describe('create user', () => {
   it('POST /create should create a user', async () => {
@@ -190,5 +198,32 @@ describe('logout', () => {
       .set('cookie', 'token=some_access_token');
 
     expect(response.statusCode).not.toBe(204);
+  });
+});
+
+describe('User Update Route', () => {
+  it('should update user information', async () => {
+    const mockUser = {
+      _id: 'user_id_1',
+      email: 'test@example.com',
+      timezone: 'Africa/Lagos',
+    };
+    await updateUser.mockResolvedValue(mockUser);
+
+    const user_id = 'user_id_1';
+    const updatedUserData = {
+      email: 'newemail@example.com',
+      timezone: 'America/New_York',
+    };
+
+
+    const response = await request(app)
+      .put('/update/:user_id')
+      .send(updatedUserData);
+
+    expect(response.status).toBe(200);
+    expect(response.body.data).toEqual(mockUser);
+    expect(response.body.success).toBe(true);
+    expect(response.body.message).toBe('User updated');
   });
 });

@@ -1,4 +1,6 @@
 const { User } = require('../models/user');
+const moment = require('moment-timezone');
+const { ObjectId } = require('mongoose').Types;
 
 async function createUser(
   username,
@@ -6,12 +8,23 @@ async function createUser(
   email,
   timezone
 ) {
-  let user = new User({
-    username: username,
-    password: password,
-    email: email,
-    timezone: timezone
-  });
+  const existingUser = await User.findOne({
+    email: email
+  })
+  let user;
+
+  if(!existingUser && !!moment.tz.zone(timezone)) {
+    user = new User({
+      username: username,
+      password: password,
+      email: email,
+      timezone: timezone,
+    });
+  } else {
+    throw new Error(
+      'Invalid timezone or email already in use'
+    )
+  }
   
   try {
     const result = await user.save();
@@ -35,11 +48,34 @@ async function loginUser(
    }
 }
 
+async function updateUser(user_id, email, timezone){
+  try {
+    const result = await User.findOneAndUpdate(
+      {
+        _id: new ObjectId(user_id),
+      },
+      {
+        $set: {
+          email: email,
+          timezone: timezone
+        },
+      },
+      {
+        new: true,
+      }
+    );
+     return result;
+  } catch (error) {
+    console.error('Error updating user:', error.message);
+    throw error; 
+  }
+}
 
 
 
 
 module.exports = { 
   createUser,
-  loginUser
+  loginUser,
+  updateUser
 }

@@ -35,11 +35,17 @@ const userLoginSchema = Joi.object().keys({
   password: Joi.string().min(6).required().strict(),
 });
 
+const userUpdateSchema = Joi.object().keys({
+  email: Joi.string().email(),
+  timezone: Joi.string()
+});
+
 const schemas = {
   '/activity/create': activitySchema,
   '/activity/update': updateSchema,
   '/user/create': userCreateSchema,
   '/user/login': userLoginSchema,
+  '/user/update': userUpdateSchema
 };
 
 module.exports =  schemas 
