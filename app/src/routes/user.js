@@ -57,6 +57,8 @@ router.post(
         status: 'success',
         message: 'You have successfully logged in.',
         user_id: user._id,
+        email: user.email,
+        timezone: user.timezone
       });
     }
   }

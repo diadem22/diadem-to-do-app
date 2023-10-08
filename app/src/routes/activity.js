@@ -66,6 +66,11 @@ router.put(
         priority,
         status
       );
+      if (!activity) {
+        res.status(400).json({
+          message: 'Error updating activity, invalid user_id or actvity does not exist',
+        });
+      }
       return res
         .status(200)
         .json({ data: activity, success: true, message: 'Activity updated' });
