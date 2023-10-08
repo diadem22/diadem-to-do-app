@@ -33,7 +33,6 @@ async function createActivity(
       'HH:mm YYYY-MM-DD',
       userTimezone
     );
-    console.log('gen')
     const currentTimeInUserTimezone = moment().tz(userTimezone);
     if (activityTimeInUserTimezone1.isBefore(currentTimeInUserTimezone)) {
       return 'The specified time is in the past.';
@@ -75,26 +74,30 @@ async function updateActivity(
   priority,
   status
 ) {
-  const result = await Activity.findOneAndUpdate(
-    {
-      user_id: user_id,
-      _id: new ObjectId(activity_id),
-    },
-    {
-      $set: {
-        isPublished: true,
-        category: category,
-        priority: priority,
-        status: status,
+  try {
+    const result = await Activity.findOneAndUpdate(
+      {
+        user_id: user_id,
+        _id: new ObjectId(activity_id),
       },
-    },
-    {
-      new: true,
-    }
-  );
-  const updatedActivity = await result.save()
+      {
+        $set: {
+          isPublished: true,
+          category: category,
+          priority: priority,
+          status: status,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+    const updatedActivity = await result.save();
 
-  return updatedActivity;
+    return updatedActivity;
+  } catch (ex) {
+    for (field in ex.errors) return ex.errors[field].message;
+  }
 }
 
 async function fetchById(id) {
