@@ -19,34 +19,9 @@ app.use(cookieParser())
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// const options = {
-//   swaggerDefinition: {
-//     openapi: '3.0.0',
-//     info: {
-//       title: 'Diadem To-Do API Documentation',
-//       version: '1.0.0',
-//       description: 'Documentation of the to-do API',
-//     },
-//     servers: [
-//       {
-//         url: 'http://localhost:6000',
-//       },
-//       {
-//         url: 'https://www.ifedaniel.com',
-//       },
-//     ],
-//   },
-//   apis: ['./docs/openapi.json'],
-// };
 
-// const swaggerSpec = swaggerJsdoc(options);
 
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-app.get('/swagger', (req, res) => {
-  // res.setHeader('Content-Type', 'application/json');
-  res.send(swaggerSpec);
-});
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 app.use('/user', userRoute)
