@@ -35,7 +35,7 @@ const options = {
       },
     ],
   },
-  apis: ['./docs/openapi.json'],
+  apis: ['app/docs/openapi.json'],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
