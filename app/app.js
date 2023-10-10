@@ -43,8 +43,8 @@ app.use(express.json());
 
 // app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.get('/swagger.json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
+app.get('/swagger', (req, res) => {
+  // res.setHeader('Content-Type', 'application/json');
   res.send(swaggerSpec);
 });
 
