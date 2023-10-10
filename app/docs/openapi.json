@@ -5,7 +5,14 @@
       "version": "1.0.0",
       "description": "Documentation of the to-do API"
     },
-  
+  "server": [
+    {
+      "url": "http://localhost:6000"
+    },
+    {
+      "url": "https://www.ifedaniel.com"
+    }
+],
   "apis": ["./src/routes/*.js"],
   "paths": {
     "/user/create": {
