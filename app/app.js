@@ -31,11 +31,11 @@ const options = {
         url: 'http://localhost:6000',
       },
       {
-        url: 'https://www.ifedaniel.com', 
+        url: 'https://www.ifedaniel.com',
       },
     ],
+    apis: ['./docs/openapi.json'],
   },
-  apis: ['./docs/openapi.json'],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
