@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 const { connectToDatabase } = require('./index');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerSpec = require('./docs/openapi.json');
 
 connectToDatabase();
 
@@ -41,6 +42,11 @@ const options = {
 const swaggerSpec = swaggerJsdoc(options);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.get('/swagger.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
 
 
 app.use('/user', userRoute)

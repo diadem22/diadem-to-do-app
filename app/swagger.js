@@ -9,9 +9,10 @@ const options = {
       description: 'Documentation of the to-do API',
     },
   },
-  apis: ['./src/routes/*.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
 
-module.exports = swaggerSpec;
+module.exports = {
+  swaggerSpec
+};
