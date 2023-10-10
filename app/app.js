@@ -28,14 +28,14 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:6000',
+        url: 'http://localhost:6000/api-docs',
       },
       {
-        url: 'https://www.ifedaniel.com', 
+        url: 'https://www.ifedaniel.com/api-docs',
       },
     ],
   },
-  apis: ['app/docs/openapi.json'],
+  apis: ['./src/routes/*.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(options);

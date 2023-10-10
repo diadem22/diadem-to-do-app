@@ -5,6 +5,7 @@
       "version": "1.0.0",
       "description": "Documentation of the to-do API"
     },
+  
   "apis": ["./src/routes/*.js"],
   "paths": {
     "/user/create": {
