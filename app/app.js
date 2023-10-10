@@ -28,10 +28,10 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:6000/api-docs',
+        url: 'http://localhost:6000',
       },
       {
-        url: 'https://www.ifedaniel.com/api-docs',
+        url: 'https://www.ifedaniel.com',
       },
     ],
   },
