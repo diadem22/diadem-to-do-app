@@ -12,7 +12,7 @@
     {
       "url": "https://www.ifedaniel.com"
     }
-],
+  ],
   "apis": ["./src/routes/*.js"],
   "paths": {
     "/user/create": {
@@ -111,6 +111,204 @@
           }
         }
       }
+    },
+    "user/login": {
+      "post": {
+        "summary": "Logs in a user with an account",
+        "tags": ["User"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "The username of the user for login."
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "The password of the user for login."
+                  }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "user_id": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "timezone": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "success": {
+                    "value": {
+                      "message": "You have successfully logged in.",
+                      "id": "5f4db09b05b724001c8d0d8c",
+                      "email": "test@email.com",
+                      "timezone": "Africa/Lagos"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Login failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "error": {
+                    "value": {
+                      "message": "Login failed",
+                      "error": "Invalid username or password"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/update/{user_id}": {
+      "put": {
+        "summary": "Update User",
+        "tags": ["User"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the user to update."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "The updated email address for the user."
+                  },
+                  "timezone": {
+                    "type": "string",
+                    "description": "The updated timezone for the user."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user_id": {
+                          "type": "string",
+                          "description": "The ID of the updated user."
+                        },
+                        "email": {
+                          "type": "string",
+                          "description": "The updated email address."
+                        },
+                        "timezone": {
+                          "type": "string",
+                          "description": "The updated timezone."
+                        }
+                      }
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "description": "Indicates if the update was successful."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "A message indicating the update status."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message indicating the issue with the request."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message indicating unauthorized access."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
+
