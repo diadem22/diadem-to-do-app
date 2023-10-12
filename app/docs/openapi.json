@@ -112,7 +112,7 @@
         }
       }
     },
-    "user/login": {
+    "/user/login": {
       "post": {
         "summary": "Logs in a user with an account",
         "tags": ["User"],
