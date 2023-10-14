@@ -14,6 +14,15 @@
     }
   ],
   "apis": ["./src/routes/*.js"],
+  "components": {
+  "securitySchemes": {
+    "cookieAuth": {
+      "type": "apiKey",
+      "in": "cookie",
+      "name": "token"
+    }
+  }
+},
   "paths": {
     "/user/create": {
       "post": {
@@ -210,7 +219,7 @@
         }
       }
     },
-    "/user/update/{user_id}": {
+    "/user/update/:user_id": {
       "put": {
         "summary": "Update User",
         "tags": ["User"],
@@ -223,6 +232,11 @@
               "type": "string"
             },
             "description": "The ID of the user to update."
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
           }
         ],
         "requestBody": {
