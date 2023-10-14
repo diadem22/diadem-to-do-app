@@ -22,7 +22,7 @@
       "name": "token"
     }
   }
-},
+  },
   "paths": {
     "/user/create": {
       "post": {
@@ -331,7 +331,285 @@
           }
         }
       }
+    },
+    "/create/:user_id": {
+      "post": {
+        "summary": "Create a new activity",
+        "tags": ["Activity"],
+         "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the user to update."
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the activity"
+                  },
+                  "category": {
+                    "type": "string",
+                    "description": "The category of the activity.",
+                    "enum": ["career", "personal", "spiritual", "exercise"]
+                  },
+                  "priority": {
+                    "type": "string",
+                    "description": "The priority of the activity.",
+                    "enum": ["high", "low"]
+                  },
+                  "isPublished": {
+                    "type": "boolean",
+                    "description": "If the activity is published or not"
+                  },
+                  "time": {
+                    "type": "string",
+                    "description": "The time the activity is to be done"
+                  }
+                },
+                "required": ["name", "category", "priority", "isPublished", "time"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Activity successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": "string"
+                    },
+                    "priority": {
+                      "type": "string"
+                    },
+                     "isPublished": {
+                      "type": "boolean"
+                    },
+                    "time": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "success": {
+                    "value": {
+                      "message": "Activity successfully created",
+                      "user_id": "msdhbfjhsgtruyw3742y87o42o8",
+                      "name": "activity1",
+                      "category": "personal",
+                      "date": "2023-10-14T00:00:00.000Z",
+                      "isPublished": true,
+                      "priority": "low",
+                      "status": "not-done",
+                      "time": "21:52",
+                      "timezone": "Africa/Lagos",
+                      "_id": "652a833d63715d0b3037c38c"
+                    }
+                  }
+                }
+              }
+            }
+          },
+           "400": {
+            "description": "Error creating activity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message indicating the issue with the request."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message indicating unauthorized access."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/activity/update/:user_id": {
+      "put": {
+        "summary": "Update an activity",
+        "tags": ["Activity"],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "activity_id": {
+                    "type": "string",
+                    "description": "The ID of the activity to update."
+                  },
+                  "category": {
+                    "type": "string",
+                    "description": "The updated category of the activity."
+                  },
+                  "priority": {
+                    "type": "string",
+                    "description": "The updated priority of the activity."
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "The updated status of the activity."
+                  }
+                },
+                "required": ["activity_id", "category", "priority", "status"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Activity updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error updating activity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/activity/fetch/{user_id}": {
+      "get": {
+        "summary": "Fetch activities by user ID",
+        "tags": ["Activity"],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+        },
+        "responses": {
+          "200": {
+            "description": "Activities retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
     }
+    
+    
   }
 }
+
 
