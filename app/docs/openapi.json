@@ -140,6 +140,15 @@
         "responses": {
           "200": {
             "description": "User successfully logged in",
+            "headers": {
+            "Set-Cookie": {
+              "schema": {
+              "type": "string",
+              "example": "token=abcde12345;"
+            },
+            "description": "A cookie containing the user's authentication token."
+            }
+          },
             "content": {
               "application/json": {
                 "schema": {
