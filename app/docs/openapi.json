@@ -219,7 +219,7 @@
         }
       }
     },
-    "/user/update/:user_id": {
+    "/user/update/{user_id}": {
       "put": {
         "summary": "Update User",
         "tags": ["User"],
@@ -473,7 +473,7 @@
         }
       }
     },
-    "/activity/update/:user_id": {
+    "/activity/update/{user_id}": {
       "put": {
         "summary": "Update an activity",
         "tags": ["Activity"],
@@ -562,7 +562,7 @@
         }
       }
     },
-    "/activity/fetch/:user_id": {
+    "/activity/fetch/{user_id}": {
       "get": {
         "summary": "Fetch activities by user ID",
         "tags": ["Activity"],
