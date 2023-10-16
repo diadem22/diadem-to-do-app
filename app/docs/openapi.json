@@ -332,7 +332,7 @@
         }
       }
     },
-    "activity/create/:user_id": {
+    "/activity/create/:user_id": {
       "post": {
         "summary": "Create a new activity",
         "tags": ["Activity"],
