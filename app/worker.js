@@ -92,9 +92,10 @@ const eveningReminderJob = schedule.scheduleJob('* * * * *', async () => {
       const userTimezone = user.timezone;
       const currentTimeInUserTimezone = moment().tz(userTimezone);
 
+
       if (
         currentTimeInUserTimezone.isSame(
-          moment.tz(userTimezone).hour(22).minute(0).second(0),
+          moment().tz(userTimezone).hour(22).minute(0).second(0),
           'minute'
         )
       ) {
